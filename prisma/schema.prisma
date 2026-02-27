@@ -10,14 +10,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  CONTRIBUTOR
+  ACADEMIC
+  EXPERT
+}
+
+enum ProjectStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  name             String
+  role             Role      @default(CONTRIBUTOR)
+  authoredProjects Project[] @relation("AuthoredProjects")
+  reviewedProjects Project[] @relation("ReviewedProjects")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
 model Project {
   id                      String       @id @default(cuid())
   title                   String
   location                String
   typology                String
+  architecturalStyle      String?
   year                    Int
-  fikraVerificationStatus String       @default("Pending")
+  status                  ProjectStatus @default(DRAFT)
+  fikraVerificationStatus String       @default("Pending") // Kept for legacy/additional status
+  authorId                String?
+  reviewerId              String?
+  author                  User?        @relation("AuthoredProjects", fields: [authorId], references: [id])
+  reviewer                User?        @relation("ReviewedProjects", fields: [reviewerId], references: [id])
   disciplines             Discipline[]
+  attachments             Attachment[]
+  shortDescription        String?
+  latitude                Float?
+  longitude               Float?
+  mapLink                 String?
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt
 }
@@ -31,4 +67,24 @@ model Discipline {
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  type       String   @default("suggestion")
+  content    String
+  urlContext String
+  authorId   String?
+  projectId  String?
+  createdAt  DateTime @default(now())
+}
+
+model Attachment {
+  id          String   @id @default(cuid())
+  projectId   String
+  url         String
+  type        String   // e.g. "photo", "cad", "document"
+  description String?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }

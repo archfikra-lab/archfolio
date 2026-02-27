@@ -1,16 +1,29 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #2EC4B6;
-  --color-secondary: #C68E2E;
-  --color-neutral: #888888;
-  --color-base: #121212;
+  --color-primary: var(--deep-teal);
+  --color-secondary: var(--mustard-gold);
+  --color-neutral: var(--paper-plane-grey);
+  --color-base: var(--drafting-white);
   --font-sans: "Inter", "IBM Plex Sans Arabic", sans-serif;
 }
 
 :root {
-  --midnight-charcoal: #121212;
-  --electric-teal: #2EC4B6;
+  /* Light Theme (Default) */
+  --drafting-white: #F9F9F7;
+  --deep-teal: #1F5F5B;
+  --paper-plane-grey: #A6A6A6;
+  --mustard-gold: #C68E2E;
+  --ink-line: #D1D1D1;
+  --light-ink-line: #D1D1D1;
+  --platinum-sheen: #E5E4E2;
+  --card-bg: #FFFFFF;
+}
+
+[data-theme='dark'] {
+  /* Dark Theme */
+  --drafting-white: #121212;
+  --deep-teal: #2EC4B6;
   --paper-plane-grey: #888888;
   --mustard-gold: #C68E2E;
   --ink-line: #333333;
@@ -19,26 +32,109 @@
   --card-bg: #1A1A1A;
 }
 
-body {
-  background-color: var(--midnight-charcoal);
-  color: var(--electric-teal);
-  font-family: var(--font-sans);
+[data-theme='blueprint'] {
+  /* Blueprint Theme */
+  --drafting-white: #003366;
+  --deep-teal: #f0f4f8;
+  --paper-plane-grey: #c0c0c0;
+  --mustard-gold: #e2b13c;
+  --ink-line: rgba(255, 255, 255, 0.2);
+  --light-ink-line: rgba(255, 255, 255, 0.4);
+  --platinum-sheen: rgba(255, 255, 255, 0.05);
+  --card-bg: rgba(0, 51, 102, 0.4);
+  --font-sans: var(--font-architects), "IBM Plex Sans Arabic", sans-serif;
 }
 
-.blueprint-grid {
-  background-image: 
-      linear-gradient(to right, rgba(46, 196, 182, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(46, 196, 182, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+[data-theme='blueprint'] body {
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.2) 100%),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  background-attachment: fixed;
 }
+
+[data-theme='blueprint'] .theme-overlay.paper-texture {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.15;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+[data-theme='blueprint'] .theme-overlay.scratches {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(45deg, transparent 49.5%, rgba(255, 255, 255, 0.03) 50%, transparent 50.5%),
+    linear-gradient(-45deg, transparent 49.8%, rgba(255, 255, 255, 0.03) 50%, transparent 50.2%);
+  background-size: 600px 600px;
+  z-index: 0;
+}
+
+[data-theme='blueprint'] .frayed-edge {
+  mask-image: url("data:image/svg+xml,%3Csvg width='100' height='10' viewBox='0 0 100 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 L5 8 L10 10 L15 7 L20 10 L25 9 L30 10 L35 8 L40 10 L45 7 L50 10 L55 9 L60 10 L65 8 L70 10 L75 7 L80 10 L85 9 L90 10 L95 8 L100 10 V0 H0 Z' fill='black'/%3E%3C/svg%3E");
+  mask-size: 200px 10px;
+  mask-repeat: repeat-x;
+}
+
+[data-theme='blueprint'] .sketch-card {
+  backdrop-filter: blur(2px);
+}
+
+[data-theme='blueprint'] .ad-placeholder-platinum {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='blueprint'] .ad-placeholder-gold {
+  background-color: var(--card-bg);
+  border: 2px solid var(--mustard-gold);
+}
+
+[data-theme='blueprint'] .ad-placeholder-gold::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--mustard-gold);
+  opacity: 0.4;
+}
+
+[data-theme='blueprint'] .ad-placeholder-silver {
+  background: rgba(192, 192, 192, 0.1);
+  border: 1px solid rgba(192, 192, 192, 0.3);
+}
+
+[data-theme='blueprint'] .chalk-btn {
+  border: 2px solid var(--deep-teal);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+[data-theme='blueprint'] .chalk-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+[data-theme='blueprint'] .technical-line {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3) 20%, rgba(255, 255, 255, 0.3) 80%, transparent);
+  height: 1px;
+  width: 100%;
+}
+
+
 .ink-border {
   border: 1px solid var(--light-ink-line);
 }
+
 .sketch-card {
   border: 1px solid var(--light-ink-line);
   transition: all 0.3s ease;
   position: relative;
 }
+
 .sketch-card::after {
   content: '';
   position: absolute;
@@ -51,41 +147,59 @@ body {
   opacity: 0;
   transition: all 0.3s ease;
 }
+
 .sketch-card:hover {
   transform: translate(-2px, -2px);
 }
+
 .sketch-card:hover::after {
   opacity: 1;
 }
+
 .arabic-text {
   font-family: 'IBM Plex Sans Arabic', sans-serif;
 }
+
 .platinum-gradient {
   background: linear-gradient(135deg, #1A1A1A 0%, #121212 100%);
 }
+
 .blueprint-pattern {
   background-image: radial-gradient(var(--ink-line) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
 .ad-placeholder-platinum {
   background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
   border: 1px dashed var(--paper-plane-grey);
   position: relative;
   overflow: hidden;
 }
+
 .ad-placeholder-gold {
   background-color: #1a1a1a;
   border: 2px solid var(--mustard-gold);
   position: relative;
 }
+
 .ad-placeholder-silver {
   background-color: #121212;
   border: 1px solid var(--ink-line);
   position: relative;
 }
+
 .technical-crosshair {
   position: absolute;
   width: 20px;
   height: 20px;
   border: 1px solid rgba(136, 136, 136, 0.3);
+}
+
+.sketch-border {
+  border: 1px solid rgba(218, 184, 11, 0.3);
+  box-shadow: 2px 2px 0px 0px rgba(28, 25, 13, 0.05);
+}
+
+.ink-line {
+  border-bottom: 1px solid rgba(28, 25, 13, 0.1);
 }
