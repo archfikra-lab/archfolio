@@ -1,7 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+const DEFAULT_IMAGES = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDjEyWQJMCUhK2IuI8hgCIO7aDJukZeZ2_bjtRRr1IEo8mRrS5MLnOkQL9bHYlcRKZY6Reqz3D9y6OD_SRjuPkJHTUMH0EpIbvMsRd4qTqHIHYyNEqYluyi3sU-v4NcDeXjDGQxgx_5FE2z_OX8BZw8ULDS24bZ-3onmaoYPP3mcnS99F36HSfj4MOwFJzS54CBnVoxPwWopyHrZfSIxvKU4RysJe8FqIVr7Vclcdpbq9_kM549HYzG4atqx2pwlGNDwLFQBFoAp5Mp",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBzsi-JG1QzDAilMULe7n9drFOUqpTVOggrnnNtCLmAZJg7FVQvw-CBYJPItCri1dh-wXFnkiIPHB5tgwh9V6jZ-Hcs8mCRDyqGt9w1WXYHRpooNa4vT5z5XrCQW459sNDd6FMin0yYrv--t2WK60-xIQK9b5-tvq9vam-m4RWK7xPiciQfkOgG1C-1iLhWFkazeFvKULaG6aJ7pmXd_m6UQ8f6uX5JxXbad8t6xx3C2DN-u_zrGW3wKb_d6F2u2ABGek_ODu6vVtTH",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAVq6jS5dq-kvGhsH8vhemwkk1Xe8caE6m9se-oEScrDHXKoyk0q4NijDsghDpeacmv_Sz7dkq--N3XtSaEDiPSoenzMJ0uerMhIOOkSVUCr6UhREO32xBmDbDhDHRO9Lubxu0ofTtUtqzLoPxhUlN2zf7t33Yb3z7EiyN14-Fke5XzGP2kFLkApzlw6leAu5G3Ule1F_B-DJ7lbF-vnGATfpLVgFXYGJokTB7yg6FVeFMmbM02JmYD5NgkYybc9UjnuHtLVy9ZH66r",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBqEl_Hy4KzkVKns7lg8cnhVH9qyPnI8XLFbaHIFtYBUCPc38wXjyj-xEVj4ICH1917t1RAYduQwiomSZnlJPdYiUEiaIGbls3S5LHuKSOs_2UwJikZIXONgv39q2-L1xPTZ_CbJpUrHM1S-kWMgqcgqBKJ2nlQltGuPrc489xjDmzy3wmvsjfsk7vWf0MAkzkcySZE7y5ZZvXgNgWGNghfAeHd_FDh5DPF64ztdKscn5HTknzq0hz1Vg9qxkGxk_2-pSNJfnKvCMN-"
+];
+
+export default async function Home() {
+  const projects = await prisma.project.findMany({
+    include: { disciplines: true },
+    orderBy: { createdAt: 'desc' }
+  });
+
   return (
     <>
       <div className="w-full bg-[var(--platinum-sheen)] border-b border-[var(--ink-line)] overflow-hidden relative">
@@ -140,153 +153,106 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-              {/* Sketch Card 1 */}
-              <div className="sketch-card bg-[var(--card-bg)] p-4 group">
-                <div className="relative overflow-hidden mb-6 border border-[var(--ink-line)]">
-                  <img
-                    alt="Glass Pavilion"
-                    className="w-full aspect-[4/5] object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjEyWQJMCUhK2IuI8hgCIO7aDJukZeZ2_bjtRRr1IEo8mRrS5MLnOkQL9bHYlcRKZY6Reqz3D9y6OD_SRjuPkJHTUMH0EpIbvMsRd4qTqHIHYyNEqYluyi3sU-v4NcDeXjDGQxgx_5FE2z_OX8BZw8ULDS24bZ-3onmaoYPP3mcnS99F36HSfj4MOwFJzS54CBnVoxPwWopyHrZfSIxvKU4RysJe8FqIVr7Vclcdpbq9_kM549HYzG4atqx2pwlGNDwLFQBFoAp5Mp"
-                  />
-                  <div className="absolute inset-0 bg-[var(--electric-teal)]/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-xl font-bold text-white mb-1 group-hover:text-[var(--mustard-gold)] transition-colors">The Glass Pavilion</h4>
-                    <div className="flex gap-3 items-center">
-                      <span className="text-[10px] font-bold uppercase text-[var(--paper-plane-grey)]">Structural</span>
-                      <span className="w-1 h-1 rounded-full bg-[var(--paper-plane-grey)]"></span>
-                      <span className="text-[10px] font-bold uppercase text-[var(--electric-teal)]">Sustainable</span>
-                    </div>
-                  </div>
-                  <span className="material-symbols-outlined text-[var(--paper-plane-grey)] group-hover:text-[var(--electric-teal)]">open_in_new</span>
-                </div>
-              </div>
+              {projects.map((project, index) => {
+                const imageSrc = DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
+                const adIndex = index + 1; // 1-based index for logic
 
-              {/* Gold Ad Placement */}
-              <div className="ad-placeholder-gold p-8 flex flex-col justify-between group">
-                <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[var(--mustard-gold)]"></div>
-                <div>
-                  <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-4 block">Industry Partner Spotlight</span>
-                  <div className="w-full h-px bg-[var(--mustard-gold)]/30 mb-6"></div>
-                  <h4 className="text-2xl font-bold text-white mb-4 leading-tight italic">Structural Innovators Collective</h4>
-                </div>
-                <div className="relative flex items-center justify-center h-48 border border-dashed border-[var(--ink-line)] mb-6 overflow-hidden">
-                  <div className="absolute inset-0 opacity-20 blueprint-pattern"></div>
-                  <span className="material-symbols-outlined text-4xl text-[var(--mustard-gold)] opacity-40">layers</span>
-                  <p className="absolute bottom-2 text-[8px] uppercase tracking-tighter text-[var(--paper-plane-grey)]">Schematic Representation Only</p>
-                </div>
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-[10px] text-[var(--paper-plane-grey)] uppercase tracking-widest mb-1">Status: Open Slot</p>
-                    <p className="text-xs text-[var(--mustard-gold)] font-bold">Partner with Archfolio</p>
-                  </div>
-                  <span className="material-symbols-outlined text-[var(--mustard-gold)]">add_circle</span>
-                </div>
-              </div>
-
-              {/* Sketch Card 2 */}
-              <div className="sketch-card bg-[var(--card-bg)] p-4 group">
-                <div className="relative overflow-hidden mb-6 border border-[var(--ink-line)]">
-                  <img
-                    alt="Metropolitan Bridge"
-                    className="w-full aspect-[4/5] object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzsi-JG1QzDAilMULe7n9drFOUqpTVOggrnnNtCLmAZJg7FVQvw-CBYJPItCri1dh-wXFnkiIPHB5tgwh9V6jZ-Hcs8mCRDyqGt9w1WXYHRpooNa4vT5z5XrCQW459sNDd6FMin0yYrv--t2WK60-xIQK9b5-tvq9vam-m4RWK7xPiciQfkOgG1C-1iLhWFkazeFvKULaG6aJ7pmXd_m6UQ8f6uX5JxXbad8t6xx3C2DN-u_zrGW3wKb_d6F2u2ABGek_ODu6vVtTH"
-                  />
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-xl font-bold text-white mb-1 group-hover:text-[var(--mustard-gold)] transition-colors">Metropolitan Bridge</h4>
-                    <div className="flex gap-3 items-center">
-                      <span className="text-[10px] font-bold uppercase text-[var(--paper-plane-grey)]">Civil</span>
-                      <span className="w-1 h-1 rounded-full bg-[var(--paper-plane-grey)]"></span>
-                      <span className="text-[10px] font-bold uppercase text-[var(--electric-teal)]">Infrastructure</span>
+                return (
+                  <div key={project.id} className="contents">
+                    {/* Sketch Card */}
+                    <div className="sketch-card bg-[var(--card-bg)] p-4 group">
+                      <div className="relative overflow-hidden mb-6 border border-[var(--ink-line)]">
+                        <img
+                          alt={project.title}
+                          className="w-full aspect-[4/5] object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                          src={imageSrc}
+                        />
+                        <div className="absolute inset-0 bg-[var(--electric-teal)]/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                      </div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="text-xl font-bold text-white mb-1 group-hover:text-[var(--mustard-gold)] transition-colors">{project.title}</h4>
+                          <div className="flex gap-3 items-center">
+                            {project.disciplines.slice(0, 2).map((discipline, i) => (
+                              <div key={discipline.id} className="flex gap-3 items-center">
+                                {i > 0 && <span className="w-1 h-1 rounded-full bg-[var(--paper-plane-grey)]"></span>}
+                                <span className={`text-[10px] font-bold uppercase ${i === 1 ? 'text-[var(--electric-teal)]' : 'text-[var(--paper-plane-grey)]'}`}>{discipline.type}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <span className="material-symbols-outlined text-[var(--paper-plane-grey)] group-hover:text-[var(--electric-teal)]">open_in_new</span>
+                      </div>
                     </div>
-                  </div>
-                  <span className="material-symbols-outlined text-[var(--paper-plane-grey)]">open_in_new</span>
-                </div>
-              </div>
 
-              {/* Silver Ad Banner */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-3">
-                <div className="ad-placeholder-silver p-6 flex flex-col md:flex-row items-center justify-between border-dashed border-[var(--paper-plane-grey)] relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none blueprint-grid"></div>
-                  <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-12 h-12 border border-[var(--ink-line)] flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[var(--paper-plane-grey)] opacity-50">branding_watermark</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--paper-plane-grey)] mb-1 block">Silver Tier Partner Space</span>
-                      <h4 className="text-lg font-medium text-white/90 tracking-tight">
-                        Technical Component Spotlight: <span className="text-[var(--electric-teal)]">Your Product Specification Here</span>
-                      </h4>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-10 mt-6 md:mt-0 relative z-10">
-                    <div className="hidden xl:block text-right">
-                      <p className="text-[9px] text-[var(--paper-plane-grey)] uppercase tracking-[0.2em] italic mb-1">Architecture-Grade Visibility</p>
-                      <p className="text-[10px] font-bold text-white/60">FIKRA Verified Industry Placement</p>
-                    </div>
-                    <button className="border border-[var(--paper-plane-grey)]/40 text-[var(--paper-plane-grey)] px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:border-[var(--mustard-gold)] hover:text-[var(--mustard-gold)] transition-all bg-transparent">
-                      Inquire Slot
-                    </button>
-                  </div>
-                </div>
-              </div>
+                    {/* Inject Custom Ads Interleaved with Projects */}
+                    {adIndex === 1 && (
+                      <div className="ad-placeholder-gold p-8 flex flex-col justify-between group">
+                        <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-[var(--mustard-gold)]"></div>
+                        <div>
+                          <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-4 block">Industry Partner Spotlight</span>
+                          <div className="w-full h-px bg-[var(--mustard-gold)]/30 mb-6"></div>
+                          <h4 className="text-2xl font-bold text-white mb-4 leading-tight italic">Structural Innovators Collective</h4>
+                        </div>
+                        <div className="relative flex items-center justify-center h-48 border border-dashed border-[var(--ink-line)] mb-6 overflow-hidden">
+                          <div className="absolute inset-0 opacity-20 blueprint-pattern"></div>
+                          <span className="material-symbols-outlined text-4xl text-[var(--mustard-gold)] opacity-40">layers</span>
+                          <p className="absolute bottom-2 text-[8px] uppercase tracking-tighter text-[var(--paper-plane-grey)]">Schematic Representation Only</p>
+                        </div>
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <p className="text-[10px] text-[var(--paper-plane-grey)] uppercase tracking-widest mb-1">Status: Open Slot</p>
+                            <p className="text-xs text-[var(--mustard-gold)] font-bold">Partner with Archfolio</p>
+                          </div>
+                          <span className="material-symbols-outlined text-[var(--mustard-gold)]">add_circle</span>
+                        </div>
+                      </div>
+                    )}
 
-              {/* Sketch Card 3 */}
-              <div className="sketch-card bg-[var(--card-bg)] p-4 group">
-                <div className="relative overflow-hidden mb-6 border border-[var(--ink-line)]">
-                  <img
-                    alt="Concert Hall"
-                    className="w-full aspect-[4/5] object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVq6jS5dq-kvGhsH8vhemwkk1Xe8caE6m9se-oEScrDHXKoyk0q4NijDsghDpeacmv_Sz7dkq--N3XtSaEDiPSoenzMJ0uerMhIOOkSVUCr6UhREO32xBmDbDhDHRO9Lubxu0ofTtUtqzLoPxhUlN2zf7t33Yb3z7EiyN14-Fke5XzGP2kFLkApzlw6leAu5G3Ule1F_B-DJ7lbF-vnGATfpLVgFXYGJokTB7yg6FVeFMmbM02JmYD5NgkYybc9UjnuHtLVy9ZH66r"
-                  />
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-xl font-bold text-white mb-1 group-hover:text-[var(--mustard-gold)] transition-colors">Parametric Concert Hall</h4>
-                    <div className="flex gap-3 items-center">
-                      <span className="text-[10px] font-bold uppercase text-[var(--paper-plane-grey)]">Acoustics</span>
-                    </div>
+                    {adIndex === 2 && (
+                      <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                        <div className="ad-placeholder-silver p-6 flex flex-col md:flex-row items-center justify-between border-dashed border-[var(--paper-plane-grey)] relative overflow-hidden">
+                          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none blueprint-grid"></div>
+                          <div className="flex items-center gap-6 relative z-10">
+                            <div className="w-12 h-12 border border-[var(--ink-line)] flex items-center justify-center">
+                              <span className="material-symbols-outlined text-[var(--paper-plane-grey)] opacity-50">branding_watermark</span>
+                            </div>
+                            <div>
+                              <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--paper-plane-grey)] mb-1 block">Silver Tier Partner Space</span>
+                              <h4 className="text-lg font-medium text-white/90 tracking-tight">
+                                Technical Component Spotlight: <span className="text-[var(--electric-teal)]">Your Product Specification Here</span>
+                              </h4>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-10 mt-6 md:mt-0 relative z-10">
+                            <div className="hidden xl:block text-right">
+                              <p className="text-[9px] text-[var(--paper-plane-grey)] uppercase tracking-[0.2em] italic mb-1">Architecture-Grade Visibility</p>
+                              <p className="text-[10px] font-bold text-white/60">FIKRA Verified Industry Placement</p>
+                            </div>
+                            <button className="border border-[var(--paper-plane-grey)]/40 text-[var(--paper-plane-grey)] px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:border-[var(--mustard-gold)] hover:text-[var(--mustard-gold)] transition-all bg-transparent">
+                              Inquire Slot
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {adIndex === 3 && (
+                      <div className="ad-placeholder-gold p-8 flex flex-col justify-center items-center text-center border-dashed">
+                        <span className="text-[8px] font-bold uppercase tracking-[0.5em] text-[var(--mustard-gold)] absolute top-4 left-0 right-0">Gold Tier Placement</span>
+                        <span className="material-symbols-outlined text-5xl text-[var(--mustard-gold)] opacity-20 mb-6">architecture</span>
+                        <h4 className="text-xl font-light text-white uppercase tracking-[0.3em] mb-4">Space for <br /> <span className="font-bold text-[var(--mustard-gold)]">Global Firms</span></h4>
+                        <div className="w-16 h-px bg-[var(--ink-line)] mb-6"></div>
+                        <p className="text-[10px] text-[var(--paper-plane-grey)] uppercase leading-relaxed max-w-[180px]">Curated showcase of engineering excellence and material innovation.</p>
+                        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center opacity-30">
+                          <span className="material-symbols-outlined text-xs">square_foot</span>
+                          <span className="text-[8px] font-bold">BY FIKRA</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <span className="material-symbols-outlined text-[var(--paper-plane-grey)]">open_in_new</span>
-                </div>
-              </div>
-
-              {/* Gold Ad Placement 2 */}
-              <div className="ad-placeholder-gold p-8 flex flex-col justify-center items-center text-center border-dashed">
-                <span className="text-[8px] font-bold uppercase tracking-[0.5em] text-[var(--mustard-gold)] absolute top-4 left-0 right-0">Gold Tier Placement</span>
-                <span className="material-symbols-outlined text-5xl text-[var(--mustard-gold)] opacity-20 mb-6">architecture</span>
-                <h4 className="text-xl font-light text-white uppercase tracking-[0.3em] mb-4">Space for <br /> <span className="font-bold text-[var(--mustard-gold)]">Global Firms</span></h4>
-                <div className="w-16 h-px bg-[var(--ink-line)] mb-6"></div>
-                <p className="text-[10px] text-[var(--paper-plane-grey)] uppercase leading-relaxed max-w-[180px]">Curated showcase of engineering excellence and material innovation.</p>
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center opacity-30">
-                  <span className="material-symbols-outlined text-xs">square_foot</span>
-                  <span className="text-[8px] font-bold">BY FIKRA</span>
-                </div>
-              </div>
-
-              {/* Sketch Card 4 */}
-              <div className="sketch-card bg-[var(--card-bg)] p-4 group">
-                <div className="relative overflow-hidden mb-6 border border-[var(--ink-line)]">
-                  <img
-                    alt="Industrial Retrofit"
-                    className="w-full aspect-[4/5] object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqEl_Hy4KzkVKns7lg8cnhVH9qyPnI8XLFbaHIFtYBUCPc38wXjyj-xEVj4ICH1917t1RAYduQwiomSZnlJPdYiUEiaIGbls3S5LHuKSOs_2UwJikZIXONgv39q2-L1xPTZ_CbJpUrHM1S-kWMgqcgqBKJ2nlQltGuPrc489xjDmzy3wmvsjfsk7vWf0MAkzkcySZE7y5ZZvXgNgWGNghfAeHd_FDh5DPF64ztdKscn5HTknzq0hz1Vg9qxkGxk_2-pSNJfnKvCMN-"
-                  />
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-xl font-bold text-white mb-1">Industrial Retrofit</h4>
-                    <div className="flex gap-3 items-center">
-                      <span className="text-[10px] font-bold uppercase text-[var(--paper-plane-grey)]">Conservation</span>
-                    </div>
-                  </div>
-                  <span className="material-symbols-outlined text-[var(--paper-plane-grey)]">open_in_new</span>
-                </div>
-              </div>
-
+                );
+              })}
             </div>
 
             <div className="mt-20 text-center">
