@@ -1,42 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2EC4B6;
+  --color-secondary: #C68E2E;
+  --color-neutral: #888888;
+  --color-base: #121212;
+  --font-sans: "Inter", "IBM Plex Sans Arabic", sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  --midnight-charcoal: #121212;
+  --electric-teal: #2EC4B6;
+  --paper-plane-grey: #888888;
+  --mustard-gold: #C68E2E;
+  --ink-line: #333333;
+  --light-ink-line: #444444;
+  --platinum-sheen: #1A1A1A;
+  --card-bg: #1A1A1A;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--midnight-charcoal);
+  color: var(--electric-teal);
+  font-family: var(--font-sans);
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+.blueprint-grid {
+  background-image: 
+      linear-gradient(to right, rgba(46, 196, 182, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(46, 196, 182, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
-
-a {
-  color: inherit;
-  text-decoration: none;
+.ink-border {
+  border: 1px solid var(--light-ink-line);
 }
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+.sketch-card {
+  border: 1px solid var(--light-ink-line);
+  transition: all 0.3s ease;
+  position: relative;
+}
+.sketch-card::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: -4px;
+  bottom: -4px;
+  left: 4px;
+  border: 1px solid var(--paper-plane-grey);
+  z-index: -1;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.sketch-card:hover {
+  transform: translate(-2px, -2px);
+}
+.sketch-card:hover::after {
+  opacity: 1;
+}
+.arabic-text {
+  font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+.platinum-gradient {
+  background: linear-gradient(135deg, #1A1A1A 0%, #121212 100%);
+}
+.blueprint-pattern {
+  background-image: radial-gradient(var(--ink-line) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.ad-placeholder-platinum {
+  background: linear-gradient(135deg, #1a1a1a 0%, #262626 100%);
+  border: 1px dashed var(--paper-plane-grey);
+  position: relative;
+  overflow: hidden;
+}
+.ad-placeholder-gold {
+  background-color: #1a1a1a;
+  border: 2px solid var(--mustard-gold);
+  position: relative;
+}
+.ad-placeholder-silver {
+  background-color: #121212;
+  border: 1px solid var(--ink-line);
+  position: relative;
+}
+.technical-crosshair {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(136, 136, 136, 0.3);
 }
