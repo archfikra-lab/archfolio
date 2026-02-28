@@ -44,7 +44,7 @@ export default function FeedbackWidget() {
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
             {/* Popover */}
             {isOpen && (
-                <div className="mb-4 w-80 bg-[var(--card-bg)] border border-[var(--electric-teal)] shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+                <div className="mb-4 w-80 tracing-paper border border-[var(--electric-teal)] shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
                     <div className="bg-[var(--electric-teal)] text-black px-4 py-3 flex items-center justify-between">
                         <span className="font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                             <span className="material-symbols-outlined text-sm">chat_bubble</span>

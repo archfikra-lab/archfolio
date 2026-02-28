@@ -21,11 +21,11 @@ async function main() {
         }
     });
 
-    const contributorUser = await prisma.user.create({
+    const authorUser = await prisma.user.create({
         data: {
             email: 'architect@studio1.com',
             name: 'Studio One Architects',
-            role: Role.CONTRIBUTOR,
+            role: Role.AUTHOR,
         }
     });
 
@@ -58,7 +58,7 @@ async function main() {
             architecturalStyle: 'Modern',
             year: 2014,
             status: ProjectStatus.APPROVED,
-            authorId: contributorUser.id,
+            authorId: authorUser.id,
             reviewerId: expertUser.id,
             disciplines: {
                 create: [
@@ -86,7 +86,7 @@ async function main() {
             architecturalStyle: 'High-Tech',
             year: 2013,
             status: ProjectStatus.APPROVED,
-            authorId: contributorUser.id,
+            authorId: authorUser.id,
             reviewerId: academicUser.id,
             disciplines: {
                 create: [
@@ -114,7 +114,7 @@ async function main() {
             architecturalStyle: 'Islamic Revival',
             year: 1989,
             status: ProjectStatus.PENDING_REVIEW,
-            authorId: contributorUser.id,
+            authorId: authorUser.id,
             disciplines: {
                 create: [
                     { type: 'Architectural', contentJson: JSON.stringify({ description: 'Octagonal prayer hall topped by a blue dome.' }) },
@@ -136,7 +136,7 @@ async function main() {
             architecturalStyle: 'Contemporary',
             year: 2003,
             status: ProjectStatus.APPROVED,
-            authorId: contributorUser.id,
+            authorId: authorUser.id,
             reviewerId: academicUser.id, // Academic review
             disciplines: {
                 create: [

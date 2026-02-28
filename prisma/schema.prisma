@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,9 +7,113 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id               String    @id @default(cuid())
+  email            String?   @unique
+  name             String?
+  role             Role      @default(AUTHOR)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  accounts         Account[]
+  authoredProjects Project[] @relation("AuthoredProjects")
+  reviewedProjects Project[] @relation("ReviewedProjects")
+  sessions         Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Project {
+  id                      String        @id @default(cuid())
+  title                   String
+  location                String
+  typology                String
+  year                    Int
+  fikraVerificationStatus String        @default("Pending")
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  authorId                String?
+  reviewerId              String?
+  status                  ProjectStatus @default(DRAFT)
+  latitude                Float?
+  longitude               Float?
+  mapLink                 String?
+  shortDescription        String?
+  architecturalStyle      String?
+  attachments             Attachment[]
+  disciplines             Discipline[]
+  author                  User?         @relation("AuthoredProjects", fields: [authorId], references: [id])
+  reviewer                User?         @relation("ReviewedProjects", fields: [reviewerId], references: [id])
+}
+
+model Discipline {
+  id          String   @id @default(cuid())
+  projectId   String
+  type        String
+  contentJson String
+  fileUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id         String   @id @default(cuid())
+  content    String
+  urlContext String
+  authorId   String?
+  projectId  String?
+  createdAt  DateTime @default(now())
+  type       String   @default("suggestion")
+}
+
+model Attachment {
+  id          String   @id @default(cuid())
+  projectId   String
+  url         String
+  type        String
+  description String?
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
 enum Role {
   ADMIN
-  CONTRIBUTOR
+  AUTHOR
   ACADEMIC
   EXPERT
 }
@@ -24,67 +125,58 @@ enum ProjectStatus {
   REJECTED
 }
 
-model User {
-  id               String    @id @default(cuid())
-  email            String    @unique
-  name             String
-  role             Role      @default(CONTRIBUTOR)
-  authoredProjects Project[] @relation("AuthoredProjects")
-  reviewedProjects Project[] @relation("ReviewedProjects")
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+enum PartnerTier {
+  PLATINUM
+  GOLD
+  SILVER
 }
 
-model Project {
-  id                      String       @id @default(cuid())
-  title                   String
-  location                String
-  typology                String
-  architecturalStyle      String?
-  year                    Int
-  status                  ProjectStatus @default(DRAFT)
-  fikraVerificationStatus String       @default("Pending") // Kept for legacy/additional status
-  authorId                String?
-  reviewerId              String?
-  author                  User?        @relation("AuthoredProjects", fields: [authorId], references: [id])
-  reviewer                User?        @relation("ReviewedProjects", fields: [reviewerId], references: [id])
-  disciplines             Discipline[]
-  attachments             Attachment[]
-  shortDescription        String?
-  latitude                Float?
-  longitude               Float?
-  mapLink                 String?
-  createdAt               DateTime     @default(now())
-  updatedAt               DateTime     @updatedAt
+enum AdPlacement {
+  HOMEPAGE
+  EXPLORE
+  ARCHIVE
+  SIDEBAR
+  BANNER
 }
 
-model Discipline {
-  id          String   @id @default(cuid())
-  projectId   String
-  type        String   // "Architectural", "Structural", "MEP"
-  contentJson String   // JSON string of parsed data
-  fileUrl     String?
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Partner {
+  id         String      @id @default(cuid())
+  name       String
+  logoUrl    String?
+  websiteUrl String?
+  tier       PartnerTier @default(SILVER)
+  active     Boolean     @default(true)
+  order      Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
 
-model Feedback {
+model Donor {
   id         String   @id @default(cuid())
-  type       String   @default("suggestion")
-  content    String
-  urlContext String
-  authorId   String?
-  projectId  String?
+  name       String
+  logoUrl    String?
+  websiteUrl String?
+  amount     Float?
+  message    String?
+  featured   Boolean  @default(false)
+  active     Boolean  @default(true)
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
-model Attachment {
-  id          String   @id @default(cuid())
-  projectId   String
-  url         String
-  type        String   // e.g. "photo", "cad", "document"
-  description String?
-  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
+model Ad {
+  id          String      @id @default(cuid())
+  title       String
+  content     String?
+  imageUrl    String?
+  linkUrl     String?
+  placement   AdPlacement @default(HOMEPAGE)
+  tier        PartnerTier @default(SILVER)
+  active      Boolean     @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  impressions Int         @default(0)
+  clicks      Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }

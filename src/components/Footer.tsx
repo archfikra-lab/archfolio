@@ -31,6 +31,9 @@ export default function Footer() {
                             <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/explore">All Projects</Link></li>
                             <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/firms">Firm Directory</Link></li>
                             <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/awards">Awards Portal</Link></li>
+                            <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/about">About</Link></li>
+                            <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/archive">Archive</Link></li>
+                            <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/help">Help Center</Link></li>
                         </ul>
                     </div>
                     <div>
@@ -55,16 +58,18 @@ export default function Footer() {
                             </button>
                         </div>
                         <h5 className="text-xs font-bold uppercase tracking-widest text-[var(--deep-teal)] mb-4 mt-8">Portals</h5>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap gap-3">
                             <Link href="/en/admin" className="text-[10px] uppercase font-bold text-[var(--paper-plane-grey)] hover:text-[var(--deep-teal)] transition-colors border border-[var(--light-ink-line)] px-3 py-1.5" title="Admin">Admin</Link>
-                            <Link href="/en/contributor" className="text-[10px] uppercase font-bold text-[var(--paper-plane-grey)] hover:text-[var(--deep-teal)] transition-colors border border-[var(--light-ink-line)] px-3 py-1.5" title="Collaborator">Collab</Link>
+                            <Link href="/en/studio" className="text-[10px] uppercase font-bold text-[var(--paper-plane-grey)] hover:text-[var(--deep-teal)] transition-colors border border-[var(--light-ink-line)] px-3 py-1.5" title="Studio">Studio</Link>
                             <Link href="/en/expert" className="text-[10px] uppercase font-bold text-[var(--paper-plane-grey)] hover:text-[var(--deep-teal)] transition-colors border border-[var(--light-ink-line)] px-3 py-1.5" title="Expert">Expert</Link>
+                            <Link href="/en/academic" className="text-[10px] uppercase font-bold text-[var(--paper-plane-grey)] hover:text-[var(--deep-teal)] transition-colors border border-[var(--light-ink-line)] px-3 py-1.5" title="Academic">Academic</Link>
+                            <Link href="/en/author" className="text-[10px] uppercase font-bold text-[var(--paper-plane-grey)] hover:text-[var(--deep-teal)] transition-colors border border-[var(--light-ink-line)] px-3 py-1.5" title="Author">Author</Link>
                         </div>
                     </div>
                 </div>
                 <div className="pt-8 border-t border-[var(--ink-line)] flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-[var(--paper-plane-grey)]">
                     <div className="flex flex-col md:flex-row items-center gap-4">
-                        <p>© 2024 Archfolio Artistic Gallery.</p>
+                        <p>© 2024 Archfolio · Archiving the Built Environment</p>
                         <div className="hidden md:block w-px h-3 bg-[var(--ink-line)]"></div>
                         <div className="flex items-center gap-2">
                             <span>Developed and managed by</span>

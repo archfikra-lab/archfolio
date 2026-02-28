@@ -29,7 +29,7 @@ export default function ProjectSubmissionForm() {
 
         try {
             await submitProjectAction(formData);
-            router.push('/contributor');
+            router.push('/author');
             router.refresh();
         } catch (error) {
             console.error(error);
@@ -39,7 +39,7 @@ export default function ProjectSubmissionForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-[var(--card-bg)] border border-[var(--ink-line)] p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="tracing-paper border border-[var(--ink-line)] p-8 space-y-8">
             <div className="space-y-6">
                 <h2 className="text-lg font-bold text-white uppercase tracking-widest border-b border-[var(--ink-line)] pb-4">General Information</h2>
 

@@ -32,7 +32,7 @@ export default function UserSelector() {
                 className="bg-neutral-800 text-white text-sm rounded px-2 py-1 outline-none border border-neutral-700 hover:border-neutral-600 transition-colors cursor-pointer"
             >
                 <option value="ADMIN">Admin</option>
-                <option value="CONTRIBUTOR">Contributor</option>
+                <option value="AUTHOR">Author</option>
                 <option value="ACADEMIC">Academic</option>
                 <option value="EXPERT">Expert</option>
             </select>

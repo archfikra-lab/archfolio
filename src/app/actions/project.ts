@@ -75,8 +75,8 @@ export async function submitProjectAction(formData: FormData) {
                 // Author is hardcoded for now until we have real auth session
                 author: {
                     connectOrCreate: {
-                        where: { email: 'contributor@fikra.test' },
-                        create: { email: 'contributor@fikra.test', name: 'Mock Contributor', role: 'CONTRIBUTOR' }
+                        where: { email: 'author@fikra.test' },
+                        create: { email: 'author@fikra.test', name: 'Mock Author', role: 'AUTHOR' }
                     }
                 },
                 disciplines: {
@@ -95,7 +95,7 @@ export async function submitProjectAction(formData: FormData) {
         });
 
         revalidatePath('/');
-        revalidatePath('/contributor');
+        revalidatePath('/author');
         revalidatePath('/expert');
         revalidatePath('/academic');
 
