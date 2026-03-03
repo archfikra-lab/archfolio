@@ -15,6 +15,9 @@ export default async function ProjectDetailsPage({
             disciplines: true,
             author: true,
             attachments: true,
+            prizes: {
+                include: { prizeType: true }
+            }
         }
     });
 
@@ -257,7 +260,7 @@ export default async function ProjectDetailsPage({
                     )}
 
                     {/* ProjectViewerClient fallback */}
-                    <ProjectViewerClient project={project} />
+                    <ProjectViewerClient project={project} isLoggedIn={false} />
                 </div>
 
                 {/* Sidebar — 1 col */}
@@ -295,6 +298,16 @@ export default async function ProjectDetailsPage({
                                     {project.status?.replace('_', ' ')}
                                 </span>
                             </div>
+                            {project.prizes && project.prizes.length > 0 && (
+                                <div className="flex justify-between items-start gap-4">
+                                    <span className="text-[10px] uppercase tracking-widest text-[var(--paper-plane-grey)] font-bold">Prizes</span>
+                                    <div className="flex flex-col gap-1 items-end">
+                                        {project.prizes.map((p: any) => (
+                                            <span key={p.id} className="text-xs text-[var(--mustard-gold)] font-bold">{p.prizeType.name}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] uppercase tracking-widest text-[var(--paper-plane-grey)] font-bold">Photos</span>
                                 <span className="text-sm text-[var(--deep-teal)] font-medium">{photos.length}</span>

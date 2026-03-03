@@ -2,6 +2,7 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { ReactNode } from "react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import HelpTriggerButton from "@/components/HelpTriggerButton";
 
 export default function AcademicLayout({ children }: { children: ReactNode }) {
     return (
@@ -27,6 +28,7 @@ export default function AcademicLayout({ children }: { children: ReactNode }) {
                         <Link className="text-xs font-semibold text-[var(--paper-plane-grey)] hover:text-[var(--mustard-gold)] transition-colors uppercase tracking-wider border-l border-[var(--ink-line)] pl-6" href="/">
                             ← Back to Site
                         </Link>
+                        <HelpTriggerButton className="w-8 h-8 flex items-center justify-center hover:bg-[var(--mustard-gold)]/10 text-[var(--deep-teal)]/80 hover:text-[var(--mustard-gold)] transition-colors rounded-full" />
                         <div className="w-8 h-8 border border-[var(--mustard-gold)] flex items-center justify-center rounded-full">
                             <span className="material-symbols-outlined text-sm text-[var(--mustard-gold)]">school</span>
                         </div>

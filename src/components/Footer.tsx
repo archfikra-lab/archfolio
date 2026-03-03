@@ -5,7 +5,7 @@ export default function Footer() {
     return (
         <footer className="bg-[var(--drafting-white)] border-t border-[var(--ink-line)] px-6 lg:px-12 py-16">
             <div className="max-w-screen-2xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
                     <div className="col-span-1 md:col-span-1">
                         <div className="flex flex-col mb-8">
                             <div className="flex flex-col">
@@ -34,14 +34,6 @@ export default function Footer() {
                             <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/about">About</Link></li>
                             <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/archive">Archive</Link></li>
                             <li><Link className="hover:text-[var(--mustard-gold)]" href="/en/help">Help Center</Link></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h5 className="text-xs font-bold uppercase tracking-widest text-[var(--deep-teal)] mb-8">Disciplines</h5>
-                        <ul className="space-y-4 text-sm font-medium text-[var(--paper-plane-grey)]">
-                            <li><Link className="hover:text-[var(--mustard-gold)]" href="#">Structural Design</Link></li>
-                            <li><Link className="hover:text-[var(--mustard-gold)]" href="#">Sustainable MEP</Link></li>
-                            <li><Link className="hover:text-[var(--mustard-gold)]" href="#">Urban Planning</Link></li>
                         </ul>
                     </div>
                     <div>

@@ -154,13 +154,18 @@ export default function ArchiveClient({ initialProjects }: { initialProjects: Pr
                                             <span className="material-symbols-outlined text-[var(--paper-plane-grey)] text-sm">location_on</span>
                                         </div>
 
-                                        {/* Thumbnail */}
-                                        <div className="flex-shrink-0 w-24 h-24 border border-[var(--ink-line)] overflow-hidden hidden sm:block">
+                                        <div className="flex-shrink-0 w-24 h-24 border border-[var(--ink-line)] overflow-hidden hidden sm:block chalk-border">
                                             {img?.url ? (
                                                 <img src={img.url} alt={project.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                                             ) : (
-                                                <div className="w-full h-full bg-[var(--platinum-sheen)]/10 flex items-center justify-center">
-                                                    <span className="material-symbols-outlined text-[var(--paper-plane-grey)] opacity-40 text-2xl">domain</span>
+                                                <div className="w-full h-full bg-[var(--platinum-sheen)]/10 flex items-center justify-center tracing-paper relative">
+                                                    <div className="absolute inset-0 opacity-[0.06]"
+                                                        style={{
+                                                            backgroundImage: 'linear-gradient(var(--deep-teal) 1px, transparent 1px), linear-gradient(90deg, var(--deep-teal) 1px, transparent 1px)',
+                                                            backgroundSize: '10px 10px'
+                                                        }}>
+                                                    </div>
+                                                    <span className="material-symbols-outlined text-[var(--paper-plane-grey)] opacity-40 text-2xl relative z-10">domain</span>
                                                 </div>
                                             )}
                                         </div>

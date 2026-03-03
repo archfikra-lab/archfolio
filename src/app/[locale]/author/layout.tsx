@@ -2,12 +2,13 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { ReactNode } from "react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import HelpTriggerButton from "@/components/HelpTriggerButton";
 
 export default function AuthorLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex flex-col min-h-screen bg-[var(--drafting-white)] text-[var(--deep-teal)]">
             {/* Author Header */}
-            <header className="sticky top-0 z-50 bg-[var(--platinum-sheen)]/90 backdrop-blur-sm border-b border-[var(--ink-line)] px-6 py-3">
+            <header className="sticky top-0 z-50 tracing-paper backdrop-blur-md border-b border-[var(--ink-line)] px-6 py-3 frayed-edge shadow-sm">
                 <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -30,7 +31,8 @@ export default function AuthorLayout({ children }: { children: ReactNode }) {
                         <Link className="text-xs font-semibold text-[var(--paper-plane-grey)] hover:text-[var(--electric-teal)] transition-colors uppercase tracking-wider border-l border-[var(--ink-line)] pl-6" href="/">
                             ← Back to Site
                         </Link>
-                        <div className="w-8 h-8 border border-[var(--paper-plane-grey)] flex items-center justify-center rounded-full">
+                        <HelpTriggerButton className="w-8 h-8 flex items-center justify-center hover:bg-[var(--electric-teal)]/10 text-[var(--deep-teal)]/80 hover:text-[var(--electric-teal)] transition-colors rounded-full" />
+                        <div className="w-8 h-8 chalk-border flex items-center justify-center bg-[var(--paper-plane-grey)]/5">
                             <span className="material-symbols-outlined text-sm text-[var(--paper-plane-grey)]">person</span>
                         </div>
                         <ThemeSwitcher />

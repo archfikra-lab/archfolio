@@ -38,6 +38,42 @@ export async function reviewProjectAction(
             });
         }
 
+        // Reward System Engine
+        if (newStatus === "APPROVED" && project.authorId) {
+            const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
+
+            if (settings && settings.rewardUploadsRequired > 0 && settings.rewardDownloadsGranted > 0) {
+                // Count author's total approved projects
+                const totalApproved = await prisma.project.count({
+                    where: {
+                        authorId: project.authorId,
+                        status: "APPROVED"
+                    }
+                });
+
+                // Check if this latest approval hits the required threshold multiplier
+                if (totalApproved > 0 && totalApproved % settings.rewardUploadsRequired === 0) {
+                    await prisma.user.update({
+                        where: { id: project.authorId },
+                        data: {
+                            earnedDownloads: { increment: settings.rewardDownloadsGranted }
+                        }
+                    });
+
+                    const { logActivity } = await import('@/lib/activity');
+                    await logActivity(
+                        project.authorId,
+                        "REWARD_EARNED",
+                        JSON.stringify({
+                            granted: settings.rewardDownloadsGranted,
+                            triggerProject: project.id,
+                            totalApproved
+                        })
+                    );
+                }
+            }
+        }
+
         revalidatePath('/expert');
         revalidatePath('/academic');
         revalidatePath('/author');

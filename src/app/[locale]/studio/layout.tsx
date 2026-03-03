@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ReactNode } from "react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import HelpTriggerButton from "@/components/HelpTriggerButton";
 
 export default function StudioLayout({ children }: { children: ReactNode }) {
     return (
@@ -31,6 +32,7 @@ export default function StudioLayout({ children }: { children: ReactNode }) {
                             <Link className="text-[var(--paper-plane-grey)] hover:text-[var(--mustard-gold)] transition-colors" href="/en/archive">Archive</Link>
                         </nav>
                         <div className="flex items-center gap-4 border-l border-[var(--mustard-gold)]/20 pl-6">
+                            <HelpTriggerButton className="flex items-center justify-center rounded-full hover:bg-[var(--mustard-gold)]/10 p-2 text-[var(--deep-teal)]/80 hover:text-[var(--mustard-gold)] transition-colors" />
                             <ThemeSwitcher />
                             <button className="flex items-center justify-center rounded-full bg-[var(--mustard-gold)]/10 p-2 text-[var(--mustard-gold)]">
                                 <span className="material-symbols-outlined">notifications</span>

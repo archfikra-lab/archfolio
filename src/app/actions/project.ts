@@ -60,6 +60,15 @@ export async function submitProjectAction(formData: FormData) {
         }
     }
 
+    // Process Prizes
+    const selectedPrizesStr = formData.get('selectedPrizes') as string;
+    let selectedPrizes: string[] = [];
+    try {
+        if (selectedPrizesStr) {
+            selectedPrizes = JSON.parse(selectedPrizesStr);
+        }
+    } catch (e) { console.error('Failed to parse selectedPrizes', e); }
+
     try {
         const project = await prisma.project.create({
             data: {
@@ -81,12 +90,13 @@ export async function submitProjectAction(formData: FormData) {
                 },
                 disciplines: {
                     create: [
-                        { type: 'Cross-Disciplinary', contentJson: crossDisciplinaryJson || '{}' },
-                        { type: 'Architectural Details', contentJson: architecturalJson || '{}' },
-                        { type: 'Structural', contentJson: structuralJson || '{}' },
-                        { type: 'MEP', contentJson: mepJson || '{}' },
-                        { type: 'Electrical & ICT', contentJson: electricalJson || '{}' }
+                        { type: 'Architectural Details', contentJson: architecturalJson || '{}' }
                     ]
+                },
+                prizes: {
+                    create: selectedPrizes.map((prizeId) => ({
+                        prizeType: { connect: { id: prizeId } }
+                    }))
                 },
                 attachments: {
                     create: uploadedAttachments

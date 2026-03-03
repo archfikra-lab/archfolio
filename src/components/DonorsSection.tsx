@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 interface Donor {
     id: string;
     name: string;
@@ -15,6 +17,7 @@ interface DonorsSectionProps {
 }
 
 export default function DonorsSection({ donors }: DonorsSectionProps) {
+    const t = useTranslations('Donors');
     if (donors.length === 0) return null;
 
     const featuredDonor = donors.find(d => d.featured);
@@ -28,7 +31,7 @@ export default function DonorsSection({ donors }: DonorsSectionProps) {
                     <div className="h-px flex-1 bg-[var(--ink-line)]" />
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--paper-plane-grey)] flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm text-[var(--electric-teal)]">volunteer_activism</span>
-                        Supported By
+                        {t('supportedBy')}
                     </h3>
                     <div className="h-px flex-1 bg-[var(--ink-line)]" />
                 </div>
@@ -39,7 +42,7 @@ export default function DonorsSection({ donors }: DonorsSectionProps) {
                         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--electric-teal)] via-[var(--mustard-gold)] to-[var(--electric-teal)]" />
 
                         <span className="text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--electric-teal)] border border-[var(--electric-teal)]/30 px-3 py-1 inline-block mb-4">
-                            Featured Supporter
+                            {t('featuredSupporter')}
                         </span>
 
                         {featuredDonor.logoUrl ? (
@@ -69,7 +72,7 @@ export default function DonorsSection({ donors }: DonorsSectionProps) {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 mt-4 text-[10px] font-bold uppercase tracking-widest text-[var(--electric-teal)] hover:text-[var(--deep-teal)] transition-colors"
                             >
-                                Visit <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                {t('visit')} <span className="material-symbols-outlined text-sm">open_in_new</span>
                             </a>
                         )}
                     </div>
@@ -111,7 +114,7 @@ export default function DonorsSection({ donors }: DonorsSectionProps) {
                                         rel="noopener noreferrer"
                                         className="text-[9px] font-bold uppercase tracking-widest text-[var(--electric-teal)] hover:text-[var(--deep-teal)] transition-colors mt-2 inline-block"
                                     >
-                                        Visit →
+                                        {t('visit')} →
                                     </a>
                                 )}
                             </div>

@@ -11,6 +11,7 @@ type HelpSection = {
     stepsAr: string[];
     tip?: string;
     tipAr?: string;
+    imageUrl?: string;
 };
 
 type PageHelp = {
@@ -19,6 +20,7 @@ type PageHelp = {
     pageIcon: string;
     overview: string;
     overviewAr: string;
+    bannerUrl?: string;
     sections: HelpSection[];
 };
 
@@ -27,6 +29,7 @@ const helpContent: Record<string, PageHelp> = {
         pageTitle: 'Homepage',
         pageTitleAr: 'الصفحة الرئيسية',
         pageIcon: 'home',
+        bannerUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
         overview: 'The homepage provides a high-level overview of the Archfolio platform — featuring published projects, partner information, and community testimonials.',
         overviewAr: 'تقدم الصفحة الرئيسية نظرة عامة على منصة Archfolio — تعرض المشاريع المنشورة ومعلومات الشركاء والشهادات.',
         sections: [
@@ -76,6 +79,7 @@ const helpContent: Record<string, PageHelp> = {
                     'كل بطاقة مشروع تربط بصفحة عرض مفصلة مع بيانات تقنية كاملة.',
                     'رتب المشاريع حسب جميع الطبقات أو الإنشائي أو الكهروميكانيكي.',
                 ],
+                imageUrl: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?auto=format&fit=crop&w=800&q=80',
             },
         ],
     },
@@ -83,6 +87,7 @@ const helpContent: Record<string, PageHelp> = {
         pageTitle: 'Explore Projects',
         pageTitleAr: 'استكشف المشاريع',
         pageIcon: 'search',
+        bannerUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
         overview: 'Discover, filter, and compare verified architectural projects from around the world.',
         overviewAr: 'اكتشف ورتب وقارن المشاريع المعمارية الموثقة من جميع أنحاء العالم.',
         sections: [
@@ -143,6 +148,7 @@ const helpContent: Record<string, PageHelp> = {
         pageTitle: 'About Archfolio',
         pageTitleAr: 'عن Archfolio',
         pageIcon: 'info',
+        bannerUrl: 'https://images.unsplash.com/photo-1481253127861-534498168948?auto=format&fit=crop&w=800&q=80',
         overview: 'Learn about the platform\'s mission, values, timeline, team, and technology stack.',
         overviewAr: 'تعرف على مهمة المنصة وقيمها وجدولها الزمني وفريقها.',
         sections: [
@@ -206,6 +212,7 @@ const helpContent: Record<string, PageHelp> = {
         pageTitle: 'Author Dashboard',
         pageTitleAr: 'لوحة المؤلف',
         pageIcon: 'edit_note',
+        bannerUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80',
         overview: 'Your personal workspace to create, manage, and track project submissions.',
         overviewAr: 'مساحة عملك الشخصية لإنشاء وإدارة وتتبع تقديمات المشاريع.',
         sections: [
@@ -387,9 +394,14 @@ export default function HelpOverlay() {
     useEffect(() => { setActiveSection(0); }, [pathname]);
 
     useEffect(() => {
+        const handleOpen = () => setOpen(true);
+        window.addEventListener('open-help-overlay', handleOpen);
         const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
         window.addEventListener('keydown', handler);
-        return () => window.removeEventListener('keydown', handler);
+        return () => {
+            window.removeEventListener('keydown', handler);
+            window.removeEventListener('open-help-overlay', handleOpen);
+        }
     }, []);
 
     return (
@@ -414,22 +426,30 @@ export default function HelpOverlay() {
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
-                        <div className="sticky top-0 bg-[var(--deep-teal)] text-[var(--drafting-white)] p-6 z-10">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 border border-[var(--mustard-gold)] flex items-center justify-center">
-                                        <span className="material-symbols-outlined text-[var(--mustard-gold)]">{pageHelp.pageIcon}</span>
-                                    </div>
-                                    <div>
-                                        <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--drafting-white)]/50">{isArabic ? 'دليل الصفحة' : 'Page Guide'}</p>
-                                        <h2 className="text-lg font-bold tracking-tight">{isArabic ? pageHelp.pageTitleAr : pageHelp.pageTitle}</h2>
-                                    </div>
+                        <div className={`relative sticky top-0 bg-[var(--deep-teal)] text-[var(--drafting-white)] p-6 z-10 overflow-hidden ${pageHelp.bannerUrl ? 'pt-20 lg:pt-28' : ''}`}>
+                            {pageHelp.bannerUrl && (
+                                <div className="absolute inset-0 z-0 select-none pointer-events-none">
+                                    <img src={pageHelp.bannerUrl} alt="" className="w-full h-full object-cover opacity-40 mix-blend-luminosity" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--deep-teal)] via-[var(--deep-teal)]/80 to-[var(--deep-teal)]/10"></div>
                                 </div>
-                                <button onClick={() => setOpen(false)} className="text-[var(--drafting-white)]/60 hover:text-[var(--drafting-white)] transition-colors">
-                                    <span className="material-symbols-outlined">close</span>
-                                </button>
+                            )}
+                            <div className="relative z-10">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 bg-white/10 backdrop-blur-sm border border-[var(--mustard-gold)]/50 flex items-center justify-center shadow-lg">
+                                            <span className="material-symbols-outlined text-[var(--mustard-gold)] text-2xl">{pageHelp.pageIcon}</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-[var(--mustard-gold)] mb-1">{isArabic ? 'دليل الصفحة' : 'Page Guide'}</p>
+                                            <h2 className="text-2xl font-black tracking-tight drop-shadow-md">{isArabic ? pageHelp.pageTitleAr : pageHelp.pageTitle}</h2>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setOpen(false)} className="w-8 h-8 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full transition-colors self-start">
+                                        <span className="material-symbols-outlined text-sm">close</span>
+                                    </button>
+                                </div>
+                                <p className="text-sm text-[var(--drafting-white)]/90 leading-relaxed max-w-[90%] font-medium">{isArabic ? pageHelp.overviewAr : pageHelp.overview}</p>
                             </div>
-                            <p className="text-sm text-[var(--drafting-white)]/70 leading-relaxed">{isArabic ? pageHelp.overviewAr : pageHelp.overview}</p>
                         </div>
 
                         {/* Section tabs */}
@@ -461,6 +481,12 @@ export default function HelpOverlay() {
                                         </div>
                                         <h3 className="text-lg font-bold text-[var(--deep-teal)] tracking-tight">{isArabic ? sec.titleAr : sec.title}</h3>
                                     </div>
+
+                                    {sec.imageUrl && (
+                                        <div className="mb-6 p-1 border-2 border-[var(--ink-line)] bg-white transform -rotate-1 hover:rotate-0 transition-transform">
+                                            <img src={sec.imageUrl} alt="" className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500" />
+                                        </div>
+                                    )}
 
                                     <div className="space-y-3">
                                         {(isArabic ? sec.stepsAr : sec.steps).map((step, i) => (

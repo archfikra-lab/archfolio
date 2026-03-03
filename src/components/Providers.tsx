@@ -6,7 +6,7 @@ import { SessionProvider } from 'next-auth/react';
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <SessionProvider>
-            <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false}>
+            <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false} themes={['light', 'dark', 'blueprint', 'green']}>
                 {children}
             </ThemeProvider>
         </SessionProvider>

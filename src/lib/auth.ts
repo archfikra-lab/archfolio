@@ -37,6 +37,11 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 console.log("Login successful for:", user.email);
+
+                // Track user login
+                const { logActivity } = await import('@/lib/activity');
+                await logActivity(user.id, "LOGIN");
+
                 return user;
             }
         })

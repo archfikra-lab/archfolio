@@ -1,5 +1,5 @@
 import './globals.css';
-import { Inter, Aref_Ruqaa, Architects_Daughter } from 'next/font/google';
+import { Inter, Architects_Daughter, Cairo } from 'next/font/google';
 import AuthWidget from '@/components/AuthWidget';
 import { Providers } from '@/components/Providers';
 
@@ -13,15 +13,17 @@ import WelcomeTutorial from '@/components/WelcomeTutorial';
 import HelpOverlay from '@/components/HelpOverlay';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
-const arefRuqaa = Aref_Ruqaa({
-  subsets: ['arabic'],
-  weight: ['400', '700'],
-  variable: '--font-aref'
-});
+
 const architectsDaughter = Architects_Daughter({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-architects'
+});
+
+const cairo = Cairo({
+  subsets: ['arabic', 'latin'],
+  variable: '--font-cairo',
+  display: 'swap',
 });
 
 export const metadata = {
@@ -48,7 +50,7 @@ export default async function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.variable} ${arefRuqaa.variable} ${architectsDaughter.variable} selection:bg-secondary/30`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${architectsDaughter.variable} ${cairo.variable} selection:bg-secondary/30`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <Providers>
             <div className="relative min-h-screen flex flex-col">

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Script from 'next/script';
+import { useRouter } from 'next/navigation';
+import { downloadCaseStudyAction } from '@/app/actions/download';
 
 type DisciplineType = "Architectural" | "Structural" | "MEP";
 
@@ -22,8 +24,38 @@ interface Project {
 
 const ModelViewer = 'model-viewer' as any;
 
-export default function ProjectViewerClient({ project }: { project: Project }) {
+export default function ProjectViewerClient({ project, isLoggedIn = false }: { project: Project, isLoggedIn?: boolean }) {
     const [activeType, setActiveType] = useState<DisciplineType>("Architectural");
+    const [isDownloading, setIsDownloading] = useState(false);
+    const router = useRouter();
+
+    const handleDownload = async () => {
+        setIsDownloading(true);
+        const result = await downloadCaseStudyAction(project.id);
+        setIsDownloading(false);
+        if (result.success) {
+            let message = "Download initiated! You have used 1 download credit.";
+            if (result.features) {
+                const restrictions = [];
+                if (!result.features.canDownloadHighRes) restrictions.push("High-Res Images");
+                if (!result.features.canDownloadCad) restrictions.push("CAD Drafts (DXF/DWG)");
+                if (!result.features.canDownloadBim) restrictions.push("BIM Geometries (Revit)");
+
+                if (restrictions.length > 0) {
+                    message += `\n\nNote: Your current plan restricts access to the following formats which have been removed from your download payload: ${restrictions.join(', ')}.`;
+                }
+            }
+            alert(message);
+        } else {
+            if (result.requiresUpgrade) {
+                if (confirm(result.error + " Would you like to view our upgrade plans?")) {
+                    router.push('/en/pricing');
+                }
+            } else {
+                alert(result.error);
+            }
+        }
+    };
 
     const disciplines = project.disciplines || [];
     const activeDiscipline = disciplines.find(d => d.type === activeType);
@@ -111,6 +143,29 @@ export default function ProjectViewerClient({ project }: { project: Project }) {
                     <div>
                         <h2 className="text-2xl font-bold text-[var(--deep-teal)] mb-4">{activeType} Specifications</h2>
                         {renderSpecs(parsedContent)}
+
+                        <div className="mt-8 pt-8 border-t border-[var(--ink-line)]">
+                            <h3 className="text-xl font-bold text-[var(--deep-teal)] mb-4 flex items-center gap-2">
+                                <span className="material-symbols-outlined text-[var(--mustard-gold)]">download</span>
+                                Case Study Documents
+                            </h3>
+                            {isLoggedIn ? (
+                                <button onClick={handleDownload} disabled={isDownloading} className="w-full bg-[var(--deep-teal)] text-white px-6 py-4 font-bold uppercase tracking-widest text-xs hover:bg-[var(--mustard-gold)] transition-colors flex items-center justify-center gap-3 shadow-md hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50">
+                                    <span className="material-symbols-outlined">{isDownloading ? 'hourglass_empty' : 'file_download'}</span>
+                                    {isDownloading ? 'Processing...' : 'Download Full Case Study Data'}
+                                </button>
+                            ) : (
+                                <div className="bg-[var(--platinum-sheen)]/20 border border-[var(--mustard-gold)]/50 p-6 text-center">
+                                    <span className="material-symbols-outlined text-4xl text-[var(--mustard-gold)] mb-3">lock</span>
+                                    <h4 className="font-bold text-[var(--deep-teal)] mb-2 uppercase tracking-wide">Registration Required</h4>
+                                    <p className="text-sm text-[var(--paper-plane-grey)] mb-6">You must be logged in to download the full case study documents, models, and comprehensive PDF analytics.</p>
+                                    <div className="flex justify-center gap-4 max-w-sm mx-auto">
+                                        <button onClick={() => router.push('/en/pricing')} className="text-[10px] flex-1 text-center font-bold uppercase tracking-widest bg-[var(--mustard-gold)] text-white px-6 py-3 hover:bg-[var(--deep-teal)] transition-colors">View Plans</button>
+                                        <button onClick={() => router.push('/en/login')} className="text-[10px] flex-1 text-center font-bold uppercase tracking-widest border border-[var(--deep-teal)] text-[var(--deep-teal)] px-6 py-3 hover:bg-[var(--platinum-sheen)] hover:border-[var(--platinum-sheen)] transition-all">Sign In</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 

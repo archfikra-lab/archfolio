@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import SeedButton from "@/components/SeedButton";
+import { getTranslations } from 'next-intl/server'; // Correct import for async Server Components
 
 export default async function AdminDashboard() {
+    const t = await getTranslations('AdminDashboard'); // Initialize translations for the 'AdminDashboard' namespace
+
     const totalProjects = await prisma.project.count();
     const pendingProjects = await (prisma.project as any).count({ where: { status: "PENDING_REVIEW" } });
     const approvedProjects = await (prisma.project as any).count({ where: { status: "APPROVED" } });
@@ -40,7 +43,7 @@ export default async function AdminDashboard() {
                         <span className="material-symbols-outlined text-sm">campaign</span>
                         Manage Ads
                     </Link>
-                    <Link href="/admin/users" className="bg-[var(--electric-teal)] text-white px-5 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[var(--deep-teal)] transition-colors flex items-center gap-2">
+                    <Link href="/en/admin/subscribers" className="bg-[var(--electric-teal)] text-white px-5 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[var(--deep-teal)] transition-colors flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm">group</span>
                         Manage Users
                     </Link>
@@ -80,7 +83,7 @@ export default async function AdminDashboard() {
                 <div className="bg-[var(--card-bg)] border border-[var(--ink-line)] p-5 hover-lift transition-all">
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mb-2">Registered Users</h3>
                     <p className="text-4xl font-light text-[var(--deep-teal)]">{totalUsers}</p>
-                    <Link href="/admin/users" className="text-[10px] font-bold uppercase tracking-widest text-[var(--electric-teal)] hover:text-[var(--deep-teal)] transition-colors mt-2 inline-flex items-center gap-1">
+                    <Link href="/en/admin/subscribers" className="text-[10px] font-bold uppercase tracking-widest text-[var(--electric-teal)] hover:text-[var(--deep-teal)] transition-colors mt-2 inline-flex items-center gap-1">
                         Manage <span className="material-symbols-outlined text-[10px]">arrow_forward</span>
                     </Link>
                 </div>
@@ -92,10 +95,10 @@ export default async function AdminDashboard() {
                 <div className="flex h-3 w-full overflow-hidden gap-0.5">
                     {totalProjects > 0 && (
                         <>
-                            <div className="bg-[var(--paper-plane-grey)]" style={{ width: `${(draftProjects / totalProjects) * 100}%` }} title={`Draft: ${draftProjects}`} />
-                            <div className="bg-[var(--mustard-gold)]" style={{ width: `${(pendingProjects / totalProjects) * 100}%` }} title={`Pending: ${pendingProjects}`} />
-                            <div className="bg-[var(--electric-teal)]" style={{ width: `${(approvedProjects / totalProjects) * 100}%` }} title={`Approved: ${approvedProjects}`} />
-                            <div className="bg-red-400" style={{ width: `${(rejectedProjects / totalProjects) * 100}%` }} title={`Rejected: ${rejectedProjects}`} />
+                            <div className="bg-[var(--paper-plane-grey)]" style={{ width: `${(draftProjects / totalProjects) * 100}% ` }} title={`Draft: ${draftProjects} `} />
+                            <div className="bg-[var(--mustard-gold)]" style={{ width: `${(pendingProjects / totalProjects) * 100}% ` }} title={`Pending: ${pendingProjects} `} />
+                            <div className="bg-[var(--electric-teal)]" style={{ width: `${(approvedProjects / totalProjects) * 100}% ` }} title={`Approved: ${approvedProjects} `} />
+                            <div className="bg-red-400" style={{ width: `${(rejectedProjects / totalProjects) * 100}% ` }} title={`Rejected: ${rejectedProjects} `} />
                         </>
                     )}
                 </div>
@@ -132,7 +135,7 @@ export default async function AdminDashboard() {
                                 {projects.map((project) => (
                                     <tr key={project.id} className="hover:bg-[var(--platinum-sheen)]/20 transition-colors group">
                                         <td className="px-5 py-3">
-                                            <Link href={`/project/${project.id}`} className="font-medium text-[var(--deep-teal)] hover:text-[var(--electric-teal)] transition-colors">
+                                            <Link href={`/ project / ${project.id} `} className="font-medium text-[var(--deep-teal)] hover:text-[var(--electric-teal)] transition-colors">
                                                 {project.title}
                                             </Link>
                                             <p className="text-[10px] text-[var(--paper-plane-grey)] mt-0.5">{project.typology} • {project.location}</p>
@@ -140,16 +143,16 @@ export default async function AdminDashboard() {
                                         <td className="px-5 py-3 text-xs">{project.author?.name || "System"}</td>
                                         <td className="px-5 py-3 text-xs">{new Date(project.createdAt).toLocaleDateString()}</td>
                                         <td className="px-5 py-3">
-                                            <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${project.status === 'APPROVED' ? 'border-[var(--electric-teal)] text-[var(--electric-teal)]' :
-                                                project.status === 'PENDING_REVIEW' ? 'border-[var(--mustard-gold)] text-[var(--mustard-gold)]' :
-                                                    project.status === 'REJECTED' ? 'border-red-400 text-red-400' :
-                                                        'border-[var(--paper-plane-grey)] text-[var(--paper-plane-grey)]'
-                                                }`}>
+                                            <span className={`inline - flex items - center px - 2 py - 0.5 text - [10px] font - bold uppercase tracking - wider border ${project.status === 'APPROVED' ? 'border-[var(--electric-teal)] text-[var(--electric-teal)]' :
+                                                    project.status === 'PENDING_REVIEW' ? 'border-[var(--mustard-gold)] text-[var(--mustard-gold)]' :
+                                                        project.status === 'REJECTED' ? 'border-red-400 text-red-400' :
+                                                            'border-[var(--paper-plane-grey)] text-[var(--paper-plane-grey)]'
+                                                } `}>
                                                 {project.status.replace('_', ' ')}
                                             </span>
                                         </td>
                                         <td className="px-5 py-3 text-right">
-                                            <Link href={`/project/${project.id}`} className="text-[var(--paper-plane-grey)] hover:text-[var(--electric-teal)] transition-colors p-1 inline-flex" title="View Project">
+                                            <Link href={`/ project / ${project.id} `} className="text-[var(--paper-plane-grey)] hover:text-[var(--electric-teal)] transition-colors p-1 inline-flex" title="View Project">
                                                 <span className="material-symbols-outlined text-sm">visibility</span>
                                             </Link>
                                         </td>

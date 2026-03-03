@@ -5,8 +5,15 @@ import AnimatedCounter from "@/components/AnimatedCounter";
 import PartnersMarquee from "@/components/PartnersMarquee";
 import DonorsSection from "@/components/DonorsSection";
 import AnimatedAd from "@/components/AnimatedAd";
+import { getTranslations } from 'next-intl/server';
 
 export default async function Home() {
+    const tHero = await getTranslations('Hero');
+    const tHome = await getTranslations('HomeSection');
+    const tDisc = await getTranslations('DisciplinesSection');
+    const tData = await getTranslations('Data');
+    const tTest = await getTranslations('Testimonials');
+    const tCTA = await getTranslations('CTA');
     // Fetch real projects from DB
     const latestProjects: any[] = await (prisma.project as any).findMany({
         where: { status: 'APPROVED' },
@@ -48,6 +55,16 @@ export default async function Home() {
         orderBy: [{ tier: 'asc' }, { createdAt: 'desc' }],
     });
 
+    // Fetch Dynamic Analytical Layers
+    const layers: any[] = await (prisma as any).analyticalLayer.findMany({
+        where: { active: true },
+        orderBy: { order: 'asc' }
+    });
+
+    // Determine if we're in Arabic by testing the current pathname translation (if possible) or infer from headers (Workaround: check translation key matches)
+    // Actually, getTranslations scope usually doesn't expose locale easily. We will check if tCTA('ready') contains Arabic chars
+    const isArabic = /[\u0600-\u06FF]/.test(tCTA('ready'));
+
     return (
         <div className="min-h-screen bg-[var(--drafting-white)] text-[var(--deep-teal)] selection:bg-[var(--mustard-gold)]/20 overflow-x-hidden relative">
 
@@ -62,19 +79,19 @@ export default async function Home() {
                             </div>
                         </ScrollReveal>
                         <ScrollReveal delay={0.1}>
-                            <h2 className="text-6xl md:text-8xl font-light leading-none mb-10 uppercase tracking-tighter">
-                                Built <br /> <span className="italic opacity-80">Environment</span>
+                            <h2 className="text-6xl md:text-8xl font-light leading-none mb-10 uppercase tracking-tighter whitespace-pre-line">
+                                {tHero('builtEnvironment')}
                             </h2>
                         </ScrollReveal>
                         <ScrollReveal delay={0.2}>
                             <p className="text-xl text-[var(--paper-plane-grey)] max-w-lg mb-12 leading-relaxed font-light">
-                                A specialized repository of high-performance architectural case studies and structural engineering breakthroughs.
+                                {tHero('description')}
                             </p>
                         </ScrollReveal>
                         <ScrollReveal delay={0.3}>
                             <div className="flex flex-wrap gap-6">
                                 <Link href="/en/explore" className="chalk-btn px-10 py-5 font-bold uppercase tracking-[0.2em] text-xs flex items-center gap-4 text-[var(--deep-teal)]">
-                                    View Technical Work
+                                    {tHero('viewFeaturedWork')}
                                     <span className="material-symbols-outlined text-lg">straighten</span>
                                 </Link>
                             </div>
@@ -85,15 +102,15 @@ export default async function Home() {
                             <div className="mt-16 grid grid-cols-3 gap-6 pt-8 border-t border-[var(--ink-line)]">
                                 <div>
                                     <AnimatedCounter target={projectCount > 0 ? projectCount : 4200} suffix={projectCount > 0 && projectCount < 100 ? '' : 'k'} className="text-4xl font-black text-[var(--mustard-gold)]" />
-                                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mt-1">Projects</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mt-1">{tHero('projects')}</p>
                                 </div>
                                 <div>
                                     <AnimatedCounter target={firmCount > 0 ? firmCount : 850} suffix="" className="text-4xl font-black text-[var(--mustard-gold)]" />
-                                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mt-1">Authors</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mt-1">{tHero('authors')}</p>
                                 </div>
                                 <div>
                                     <AnimatedCounter target={12} suffix="" className="text-4xl font-black text-[var(--mustard-gold)]" />
-                                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mt-1">Countries</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-[var(--paper-plane-grey)] mt-1">{tHero('countries')}</p>
                                 </div>
                             </div>
                         </ScrollReveal>
@@ -132,9 +149,9 @@ export default async function Home() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ScrollReveal>
                         <div className="text-center mb-16">
-                            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-3 block">Workflow</span>
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">How It Works</h2>
-                            <p className="text-[var(--paper-plane-grey)] font-light max-w-xl mx-auto">From submission to publication — a rigorous, peer-reviewed archival process.</p>
+                            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-3 block">{tHome('workflow')}</span>
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">{tHome('howItWorks')}</h2>
+                            <p className="text-[var(--paper-plane-grey)] font-light max-w-xl mx-auto">{tHome('workflowDesc')}</p>
                         </div>
                     </ScrollReveal>
 
@@ -142,35 +159,35 @@ export default async function Home() {
                         <div className="hidden md:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--ink-line)] to-transparent -translate-y-1/2 z-0"></div>
 
                         <ScrollReveal delay={0.1}>
-                            <div className="relative hand-drawn-card p-8 text-center hover-lift group">
-                                <div className="w-16 h-16 mx-auto mb-6 border-2 border-[var(--mustard-gold)] flex items-center justify-center bg-[var(--mustard-gold)]/5 group-hover:bg-[var(--mustard-gold)]/20 transition-colors">
+                            <div className="relative hand-drawn-card p-8 text-center hover-lift group chalk-border">
+                                <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-[var(--mustard-gold)]/5 group-hover:bg-[var(--mustard-gold)]/20 transition-colors chalk-border">
                                     <span className="material-symbols-outlined text-3xl text-[var(--mustard-gold)]">upload_file</span>
                                 </div>
-                                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-2">Step 01</div>
-                                <h3 className="text-xl font-black uppercase tracking-tight mb-3">Submit</h3>
-                                <p className="text-sm text-[var(--paper-plane-grey)] font-light">Upload your case study with comprehensive technical data, drawings, and AI-assisted analysis.</p>
+                                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-2">{tHome('step1')}</div>
+                                <h3 className="text-xl font-black uppercase tracking-tight mb-3">{tHome('step1Title')}</h3>
+                                <p className="text-sm text-[var(--paper-plane-grey)] font-light">{tHome('step1Desc')}</p>
                             </div>
                         </ScrollReveal>
 
                         <ScrollReveal delay={0.2}>
-                            <div className="relative hand-drawn-card p-8 text-center hover-lift group">
-                                <div className="w-16 h-16 mx-auto mb-6 border-2 border-[var(--deep-teal)] flex items-center justify-center bg-[var(--deep-teal)]/5 group-hover:bg-[var(--deep-teal)]/20 transition-colors">
+                            <div className="relative hand-drawn-card p-8 text-center hover-lift group chalk-border">
+                                <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-[var(--deep-teal)]/5 group-hover:bg-[var(--deep-teal)]/20 transition-colors chalk-border" style={{ borderColor: 'var(--deep-teal)' }}>
                                     <span className="material-symbols-outlined text-3xl text-[var(--deep-teal)]">rate_review</span>
                                 </div>
-                                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-2">Step 02</div>
-                                <h3 className="text-xl font-black uppercase tracking-tight mb-3">Review</h3>
-                                <p className="text-sm text-[var(--paper-plane-grey)] font-light">Expert and Academic panels evaluate structural integrity, sustainability metrics, and design rigor.</p>
+                                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-2">{tHome('step2')}</div>
+                                <h3 className="text-xl font-black uppercase tracking-tight mb-3">{tHome('step2Title')}</h3>
+                                <p className="text-sm text-[var(--paper-plane-grey)] font-light">{tHome('step2Desc')}</p>
                             </div>
                         </ScrollReveal>
 
                         <ScrollReveal delay={0.3}>
-                            <div className="relative hand-drawn-card p-8 text-center hover-lift group">
-                                <div className="w-16 h-16 mx-auto mb-6 border-2 border-[var(--deep-teal)] flex items-center justify-center bg-[var(--deep-teal)]/5 group-hover:bg-[var(--deep-teal)]/20 transition-colors">
+                            <div className="relative hand-drawn-card p-8 text-center hover-lift group chalk-border">
+                                <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-[var(--deep-teal)]/5 group-hover:bg-[var(--deep-teal)]/20 transition-colors chalk-border" style={{ borderColor: 'var(--deep-teal)' }}>
                                     <span className="material-symbols-outlined text-3xl text-[var(--deep-teal)]">verified</span>
                                 </div>
-                                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-2">Step 03</div>
-                                <h3 className="text-xl font-black uppercase tracking-tight mb-3">Publish</h3>
-                                <p className="text-sm text-[var(--paper-plane-grey)] font-light">Approved works become part of the permanent registry — searchable, citable, and globally accessible.</p>
+                                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-2">{tHome('step3')}</div>
+                                <h3 className="text-xl font-black uppercase tracking-tight mb-3">{tHome('step3Title')}</h3>
+                                <p className="text-sm text-[var(--paper-plane-grey)] font-light">{tHome('step3Desc')}</p>
                             </div>
                         </ScrollReveal>
                     </div>
@@ -183,86 +200,113 @@ export default async function Home() {
                     <ScrollReveal>
                         <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 border-b border-[var(--ink-line)] pb-10">
                             <div>
-                                <h3 className="text-4xl font-light mb-4 uppercase tracking-widest">Engineering Portfolio</h3>
-                                <p className="text-[var(--paper-plane-grey)] text-xs uppercase tracking-[0.4em]">Sub-Division by Discipline</p>
+                                <h3 className="text-4xl font-light mb-4 uppercase tracking-widest">{tHome('engineeringPortfolio')}</h3>
+                                <p className="text-[var(--paper-plane-grey)] text-xs uppercase tracking-[0.4em]">{tHome('subDivision')}</p>
                             </div>
                             <div className="flex flex-wrap gap-4 mt-8 md:mt-0">
-                                <Link href="/en/explore" className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-[var(--deep-teal)] bg-[var(--deep-teal)] text-[var(--drafting-white)]">All Layers</Link>
-                                <button className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-[var(--ink-line)] hover:border-[var(--deep-teal)] transition-colors text-[var(--paper-plane-grey)]">Architectural</button>
-                                <button className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-[var(--ink-line)] hover:border-[var(--deep-teal)] transition-colors text-[var(--paper-plane-grey)]">Structural</button>
-                                <button className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest border border-[var(--ink-line)] hover:border-[var(--deep-teal)] transition-colors text-[var(--paper-plane-grey)]">Mechanical</button>
+                                <Link href="/en/explore" className="chalk-btn px-6 py-2 text-[10px] font-bold uppercase tracking-widest bg-[var(--deep-teal)] text-[var(--drafting-white)]">{tHome('allLayers')}</Link>
+                                <button className="chalk-btn px-6 py-2 text-[10px] font-bold uppercase tracking-widest hover:text-[var(--deep-teal)] transition-colors text-[var(--paper-plane-grey)]">{tHome('architectural')}</button>
                             </div>
                         </div>
                     </ScrollReveal>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 card-grid">
-                        {projects.map((project, idx) => (
-                            <Link key={project.id} href={`/en/project/${project.id}`} className={`hand-drawn-card p-6 group ${idx === 1 ? 'gold-border' : ''}`}>
-                                <div className={`relative overflow-hidden mb-8 border ${idx === 1 ? 'border-[var(--mustard-gold)]/30' : 'border-[var(--ink-line)]'}`}>
-                                    {(() => {
-                                        const imageAttachment = project.attachments?.find((a: any) =>
-                                            a.type === 'photo' || a.type?.startsWith('image')
-                                        );
-                                        const imageUrl = imageAttachment?.url;
-                                        return imageUrl ? (
-                                            <img
-                                                src={imageUrl}
-                                                alt={project.title}
-                                                className="w-full aspect-[4/5] object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0"
-                                            />
-                                        ) : (
-                                            <div className="w-full aspect-[4/5] flex items-center justify-center bg-[var(--drafting-white)] relative overflow-hidden">
-                                                <div className="absolute inset-0 opacity-[0.06]"
-                                                    style={{
-                                                        backgroundImage: 'linear-gradient(var(--deep-teal) 1px, transparent 1px), linear-gradient(90deg, var(--deep-teal) 1px, transparent 1px)',
-                                                        backgroundSize: '15px 15px'
-                                                    }}>
-                                                </div>
-                                                <div className="w-3/4 h-3/4 border-2 border-[var(--mustard-gold)] relative scale-95 group-hover:scale-100 transition-transform duration-500">
-                                                    <div className="absolute top-1/2 left-0 right-0 h-px bg-[var(--mustard-gold)]/50"></div>
-                                                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--mustard-gold)]/50"></div>
-                                                    <div className="absolute inset-0 flex items-center justify-center">
-                                                        <span className="material-symbols-outlined text-[var(--mustard-gold)]/30 text-5xl">domain</span>
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-0">
+                        {projects.map((project, idx) => {
+                            // Define grid spanning logic for asymmetrical masonry
+                            let spanClass = "md:col-span-6 lg:col-span-4"; // Default for idx > 1
+                            if (idx === 0) spanClass = "md:col-span-12 lg:col-span-8";
+                            else if (idx === 1) spanClass = "md:col-span-12 lg:col-span-4";
+
+                            const isHero = idx === 0;
+
+                            return (
+                                <Link key={project.id} href={`/en/project/${project.id}`} className={`group relative block ${spanClass} hover-lift-dynamic`}>
+                                    <div className={`hand-drawn-card bg-[var(--card-bg)] border border-[var(--ink-line)] overflow-hidden h-full flex flex-col items-start p-2 pb-6 chalk-border transition-all duration-300 ${isHero ? 'border-[var(--mustard-gold)]/50' : 'group-hover:border-[var(--electric-teal)]'}`}>
+
+                                        {/* Image Section */}
+                                        <div className={`relative w-full ${isHero ? 'aspect-video lg:aspect-[2/1]' : 'aspect-square'} overflow-hidden mb-6 border border-[var(--ink-line)]/50`}>
+                                            {(() => {
+                                                const imageAttachment = project.attachments?.find((a: any) =>
+                                                    a.type === 'photo' || a.type?.startsWith('image')
+                                                );
+                                                const imageUrl = imageAttachment?.url;
+
+                                                return imageUrl ? (
+                                                    <img
+                                                        src={imageUrl}
+                                                        alt={project.title}
+                                                        className="w-full h-full object-cover grayscale opacity-90 image-reveal transition-all duration-1000"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-[var(--platinum-sheen)]/20 relative">
+                                                        <div className="absolute inset-0 opacity-[0.05]"
+                                                            style={{
+                                                                backgroundImage: 'linear-gradient(var(--deep-teal) 1px, transparent 1px), linear-gradient(90deg, var(--deep-teal) 1px, transparent 1px)',
+                                                                backgroundSize: '15px 15px'
+                                                            }}>
+                                                        </div>
+                                                        <span className="material-symbols-outlined text-[var(--paper-plane-grey)] opacity-30 text-5xl">architecture</span>
                                                     </div>
+                                                );
+                                            })()}
+
+                                            {/* Overlays */}
+                                            <div className="absolute inset-0 bg-[var(--deep-teal)]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none tracing-paper" style={{ mixBlendMode: 'overlay' }}></div>
+
+                                            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[var(--deep-teal)]/90 via-[var(--deep-teal)]/40 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-end">
+                                                <div className="flex gap-3 text-white">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest border border-white/30 px-2 py-1 bg-black/20 backdrop-blur-sm">{tData.has(`Typology.${project.typology}` as any) ? tData(`Typology.${project.typology}` as any) : project.typology}</span>
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest border border-white/30 px-2 py-1 bg-black/20 backdrop-blur-sm">{tData.has(`Location.${project.location}` as any) ? tData(`Location.${project.location}` as any) : project.location}</span>
                                                 </div>
                                             </div>
-                                        );
-                                    })()}
-                                    {idx === 1 && (
-                                        <div className="absolute top-0 right-0 bg-[var(--mustard-gold)] text-black text-[9px] px-3 py-1.5 font-bold uppercase tracking-[0.2em] z-20 flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[12px]">star</span>
-                                            Featured
+
+                                            {isHero && (
+                                                <div className="absolute top-4 left-4 bg-[var(--mustard-gold)] text-[var(--drafting-white)] text-[10px] uppercase font-bold tracking-widest px-3 py-1 shadow-md">
+                                                    {tHome('featuredProject')}
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
-                                <div className="flex justify-between items-start">
-                                    <div>
-                                        <h4 className={`text-2xl font-light mb-2 uppercase group-hover:translate-x-1 transition-transform ${idx === 1 ? 'text-[var(--mustard-gold)]' : ''}`}>
-                                            {project.title}
-                                        </h4>
-                                        <div className="flex gap-4 items-center">
-                                            <span className="text-[10px] font-bold uppercase text-[var(--paper-plane-grey)] tracking-widest">{project.typology}</span>
-                                            <span className="w-1 h-1 rounded-full bg-[var(--ink-line)]"></span>
-                                            <span className="text-[10px] font-bold uppercase text-[var(--paper-plane-grey)] tracking-widest italic">{project.location}</span>
+
+                                        {/* Content Section */}
+                                        <div className="px-5 w-full flex-grow flex flex-col justify-between">
+                                            <div>
+                                                <div className="flex justify-between items-start gap-4">
+                                                    <h4 className={`font-light uppercase tracking-tight mb-2 group-hover:text-[var(--mustard-gold)] transition-colors ${isHero ? 'text-3xl md:text-4xl' : 'text-xl'}`}>
+                                                        {project.title}
+                                                    </h4>
+                                                    <span className="material-symbols-outlined text-[var(--paper-plane-grey)] group-hover:text-[var(--mustard-gold)] transition-colors opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 duration-500 ease-out">east</span>
+                                                </div>
+                                                <p className="text-sm font-light text-[var(--paper-plane-grey)] line-clamp-2 mt-1 mb-4 leading-relaxed">
+                                                    {project.shortDescription}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex items-center gap-3 pt-4 border-t border-[var(--ink-line)]/50 mt-auto">
+                                                <span className="material-symbols-outlined text-[var(--electric-teal)] text-sm">verified</span>
+                                                {project.author?.name ? (
+                                                    <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--paper-plane-grey)]">{tHome('by')} {project.author.name}</span>
+                                                ) : (
+                                                    <span className="text-[10px] uppercase tracking-widest font-bold text-[var(--paper-plane-grey)]">{tHome('fikraVerified')}</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                    <span className="material-symbols-outlined text-[var(--paper-plane-grey)] group-hover:text-[var(--deep-teal)] transition-colors">open_in_new</span>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Mid-page Banner */}
                     <ScrollReveal delay={0.1}>
                         <div className="mt-16 border border-[var(--ink-line)] p-10 bg-[var(--card-bg)] relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-10 chalk-border">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--paper-plane-grey)] mb-4">Manual Spotlight // Ref #992</span>
-                                <h4 className="text-3xl font-light tracking-tight uppercase max-w-xl leading-snug">Precision drafting tools for the modern engineer.</h4>
+                                <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-[var(--paper-plane-grey)] mb-4">{tHome('manualSpotlight')}</span>
+                                <h4 className="text-3xl font-light tracking-tight uppercase max-w-xl leading-snug">{tHome('precisionDrafting')}</h4>
                             </div>
                             <div className="flex items-center gap-10">
-                                <p className="text-[10px] text-[var(--paper-plane-grey)] uppercase tracking-[0.3em] max-w-[180px] text-right hidden lg:block italic leading-relaxed">Redefining standards since the ink era 1994.</p>
+                                <p className="text-[10px] text-[var(--paper-plane-grey)] uppercase tracking-[0.3em] max-w-[180px] text-right hidden lg:block italic leading-relaxed">{tHome('redefiningStandards')}</p>
                                 <button className="chalk-btn px-10 py-4 text-[10px] font-bold uppercase tracking-widest text-[var(--deep-teal)]">
-                                    Inquire Now
+                                    {tHome('inquireNow')}
                                 </button>
                             </div>
                         </div>
@@ -270,7 +314,7 @@ export default async function Home() {
 
                     <div className="mt-24 text-center">
                         <Link href="/en/explore" className="chalk-btn px-16 py-5 text-xs font-bold uppercase tracking-[0.4em] inline-flex items-center gap-3 text-[var(--deep-teal)]">
-                            Open All Archives [Vol. I - XII]
+                            {tHome('openAllArchives')}
                             <span className="material-symbols-outlined text-lg">east</span>
                         </Link>
                     </div>
@@ -282,23 +326,35 @@ export default async function Home() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ScrollReveal>
                         <div className="text-center mb-16">
-                            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-3 block">Cross-Discipline</span>
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">Four Analytical Layers</h2>
-                            <p className="text-[var(--paper-plane-grey)] font-light max-w-xl mx-auto">Every project is rigorously analyzed through Fikra&apos;s proprietary multi-discipline framework.</p>
+                            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-3 block">{tDisc('crossDiscipline')}</span>
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">{tDisc('fourLayers')}</h2>
+                            <p className="text-[var(--paper-plane-grey)] font-light max-w-xl mx-auto">{tDisc('desc')}</p>
                         </div>
                     </ScrollReveal>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            { icon: 'apartment', title: 'Architectural', subtitle: 'Skin & Soul', desc: 'Form, space-making, material expression, and contextual sensitivity.', color: 'var(--deep-teal)' },
-                            { icon: 'foundation', title: 'Structural', subtitle: 'Lines & Systems', desc: 'Load paths, material performance, seismic resilience, and innovation.', color: 'var(--electric-teal)' },
-                            { icon: 'hvac', title: 'MEP', subtitle: 'Circulation & Nerve', desc: 'Mechanical, electrical, plumbing systems and energy performance.', color: 'var(--mustard-gold)' },
-                            { icon: 'eco', title: 'Sustainability', subtitle: 'Context & Timeline', desc: 'Environmental impact, lifecycle analysis, and renewable integration.', color: 'var(--bright-rust, #C0392B)' },
+                        {layers.length > 0 ? layers.map((layer: any, i: number) => (
+                            <ScrollReveal key={layer.id} delay={i * 0.1}>
+                                <div className="group hand-drawn-card p-8 hover-lift hover:border-[var(--mustard-gold)] transition-all relative overflow-hidden chalk-border">
+                                    <div className="absolute top-0 right-0 w-20 h-20 border-l border-b border-[var(--ink-line)] group-hover:border-[var(--mustard-gold)]/30 transition-colors"></div>
+                                    <div className="w-14 h-14 chalk-border flex items-center justify-center mb-6 transition-colors group-hover:bg-[var(--deep-teal)]/5" style={{ borderColor: layer.color }}>
+                                        <span className="material-symbols-outlined text-2xl" style={{ color: layer.color }}>{layer.icon}</span>
+                                    </div>
+                                    <div className="text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-1">{isArabic ? layer.subtitleAr : layer.subtitleEn}</div>
+                                    <h3 className="text-lg font-black uppercase tracking-tight mb-3">{isArabic ? layer.titleAr : layer.titleEn}</h3>
+                                    <p className="text-sm text-[var(--paper-plane-grey)] font-light leading-relaxed">{isArabic ? layer.descAr : layer.descEn}</p>
+                                </div>
+                            </ScrollReveal>
+                        )) : [
+                            { icon: 'apartment', title: tDisc('archTitle'), subtitle: tDisc('archSub'), desc: tDisc('archDesc'), color: 'var(--deep-teal)' },
+                            { icon: 'foundation', title: tDisc('structTitle'), subtitle: tDisc('structSub'), desc: tDisc('structDesc'), color: 'var(--electric-teal)' },
+                            { icon: 'hvac', title: tDisc('mepTitle'), subtitle: tDisc('mepSub'), desc: tDisc('mepDesc'), color: 'var(--mustard-gold)' },
+                            { icon: 'eco', title: tDisc('sustTitle'), subtitle: tDisc('sustSub'), desc: tDisc('sustDesc'), color: 'var(--bright-rust, #C0392B)' },
                         ].map((d, i) => (
                             <ScrollReveal key={d.title} delay={i * 0.1}>
-                                <div className="group hand-drawn-card p-8 hover-lift hover:border-[var(--mustard-gold)] transition-all relative overflow-hidden">
+                                <div className="group hand-drawn-card p-8 hover-lift hover:border-[var(--mustard-gold)] transition-all relative overflow-hidden chalk-border">
                                     <div className="absolute top-0 right-0 w-20 h-20 border-l border-b border-[var(--ink-line)] group-hover:border-[var(--mustard-gold)]/30 transition-colors"></div>
-                                    <div className="w-14 h-14 border-2 flex items-center justify-center mb-6 transition-colors group-hover:bg-[var(--deep-teal)]/5" style={{ borderColor: d.color }}>
+                                    <div className="w-14 h-14 chalk-border flex items-center justify-center mb-6 transition-colors group-hover:bg-[var(--deep-teal)]/5" style={{ borderColor: d.color }}>
                                         <span className="material-symbols-outlined text-2xl" style={{ color: d.color }}>{d.icon}</span>
                                     </div>
                                     <div className="text-[9px] font-bold uppercase tracking-[0.3em] text-[var(--paper-plane-grey)] mb-1">{d.subtitle}</div>
@@ -312,11 +368,13 @@ export default async function Home() {
             </section>
 
             {/* Animated Ad */}
-            {ads.length > 0 && (
-                <section className="max-w-screen-2xl mx-auto px-6 lg:px-12 py-6">
-                    <AnimatedAd ads={ads} placement="HOMEPAGE" />
-                </section>
-            )}
+            {
+                ads.length > 0 && (
+                    <section className="max-w-screen-2xl mx-auto px-6 lg:px-12 py-6">
+                        <AnimatedAd ads={ads} placement="HOMEPAGE" />
+                    </section>
+                )
+            }
 
             {/* Partners Marquee */}
             <PartnersMarquee partners={partners} />
@@ -329,16 +387,16 @@ export default async function Home() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ScrollReveal>
                         <div className="text-center mb-16">
-                            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-3 block">Voices</span>
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">From the Community</h2>
-                            <p className="text-[var(--paper-plane-grey)] font-light max-w-xl mx-auto">What architects, engineers, and academics say about the platform.</p>
+                            <span className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--mustard-gold)] mb-3 block">{tTest('voices')}</span>
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-4">{tTest('fromCommunity')}</h2>
+                            <p className="text-[var(--paper-plane-grey)] font-light max-w-xl mx-auto">{tTest('desc')}</p>
                         </div>
                     </ScrollReveal>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { quote: "Archfolio gave our practice a credible, permanent home for our most technically challenging projects. The peer review process elevated our documentation standards.", name: "Sarah Al-Rashid", role: "Principal Architect", firm: "Al-Rashid Studio, Amman" },
-                            { quote: "The multi-discipline framework — Structural, MEP, Sustainability — forces a rigorous analysis that benefits both the submitted work and the reviewing panel.", name: "Dr. Karim Nassar", role: "Structural Engineer", firm: "KN Engineering, Beirut" },
-                            { quote: "For academic research, having a peer-verified repository of real-world case studies is invaluable. Archfolio bridges the gap between practice and theory.", name: "Prof. Lina Haddad", role: "Architecture Faculty", firm: "University of Jordan" },
+                            { quote: tTest('quote1'), name: tTest('name1'), role: tTest('role1'), firm: tTest('firm1') },
+                            { quote: tTest('quote2'), name: tTest('name2'), role: tTest('role2'), firm: tTest('firm2') },
+                            { quote: tTest('quote3'), name: tTest('name3'), role: tTest('role3'), firm: tTest('firm3') },
                         ].map((t, i) => (
                             <ScrollReveal key={i} delay={i * 0.15}>
                                 <div className="hand-drawn-card p-8 hover-lift h-full flex flex-col">
@@ -363,20 +421,20 @@ export default async function Home() {
                 <div className="max-w-3xl mx-auto px-4 relative z-10">
                     <ScrollReveal>
                         <span className="material-symbols-outlined text-5xl text-[var(--mustard-gold)] mb-6 block">architecture</span>
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-6">Ready to Contribute?</h2>
-                        <p className="opacity-70 font-light mb-10 text-lg">Join a growing network of architects, engineers, and academics documenting the built environment for future generations.</p>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight mb-6">{tCTA('ready')}</h2>
+                        <p className="opacity-70 font-light mb-10 text-lg">{tCTA('desc')}</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link href="/en/author" className="chalk-btn border-[var(--mustard-gold)] text-[var(--mustard-gold)] px-10 py-4 font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[var(--mustard-gold)]/10">
-                                Submit a Project
+                                {tCTA('submit')}
                                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
                             </Link>
                             <Link href="/en/explore" className="chalk-btn border-[var(--drafting-white)]/30 px-10 py-4 font-bold text-sm uppercase tracking-widest hover:bg-[var(--drafting-white)]/10">
-                                Browse Archive
+                                {tCTA('browse')}
                             </Link>
                         </div>
                     </ScrollReveal>
                 </div>
             </section>
-        </div>
+        </div >
     );
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 interface Partner {
     id: string;
     name: string;
@@ -13,6 +15,7 @@ interface PartnersMarqueeProps {
 }
 
 export default function PartnersMarquee({ partners }: PartnersMarqueeProps) {
+    const t = useTranslations('Partners');
     if (partners.length === 0) return null;
 
     // Double the list for seamless loop
@@ -37,7 +40,7 @@ export default function PartnersMarquee({ partners }: PartnersMarqueeProps) {
                     <div className="h-px flex-1 bg-[var(--ink-line)]" />
                     <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-[var(--paper-plane-grey)] flex items-center gap-2">
                         <span className="material-symbols-outlined text-sm text-[var(--mustard-gold)]">handshake</span>
-                        Our Partners & Sponsors
+                        {t('ourPartners')}
                     </h3>
                     <div className="h-px flex-1 bg-[var(--ink-line)]" />
                 </div>

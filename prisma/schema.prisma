@@ -8,19 +8,25 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(cuid())
-  email            String?   @unique
-  name             String?
-  role             Role      @default(AUTHOR)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  emailVerified    DateTime?
-  image            String?
-  password         String?
-  accounts         Account[]
+  id                 String            @id @default(cuid())
+  email              String?           @unique
+  name               String?
+  role               Role              @default(AUTHOR)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  emailVerified      DateTime?
+  image              String?
+  password           String?
+  subscriptionPlanId String?
+  downloadCount      Int               @default(0)
+  earnedDownloads    Int               @default(0)
+  lastDownloadReset  DateTime          @default(now())
+  subscriptionPlan   SubscriptionPlan? @relation(fields: [subscriptionPlanId], references: [id])
+  accounts           Account[]
   authoredProjects Project[] @relation("AuthoredProjects")
   reviewedProjects Project[] @relation("ReviewedProjects")
   sessions         Session[]
+  activityLogs     ActivityLog[]
 }
 
 model Account {
@@ -76,6 +82,7 @@ model Project {
   architecturalStyle      String?
   attachments             Attachment[]
   disciplines             Discipline[]
+  prizes                  ProjectPrize[]
   author                  User?         @relation("AuthoredProjects", fields: [authorId], references: [id])
   reviewer                User?         @relation("ReviewedProjects", fields: [reviewerId], references: [id])
 }
@@ -179,4 +186,78 @@ model Ad {
   clicks      Int         @default(0)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+}
+
+// ==========================================
+// DYNAMIC HOMEPAGE CONTENT
+// ==========================================
+
+model AnalyticalLayer {
+  id         String   @id @default(cuid())
+  icon       String   // Material symbol name
+  titleEn    String
+  titleAr    String
+  subtitleEn String
+  subtitleAr String
+  descEn     String
+  descAr     String
+  color      String   // Hex code or CSS var (e.g., var(--deep-teal))
+  order      Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SubscriptionPlan {
+  id                 String   @id @default(cuid())
+  name               String   @unique
+  description        String?
+  price              Float    @default(0)
+  perMonth           Boolean  @default(true)
+  featuresJson       String   @default("[]") 
+  downloadLimit      Int      @default(0) // 0 means no downloads, -1 means unlimited
+  canDownloadHighRes Boolean  @default(true)
+  canDownloadCad     Boolean  @default(false)
+  canDownloadBim     Boolean  @default(false)
+  active             Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  users              User[]
+}
+
+model PrizeType {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  projects    ProjectPrize[]
+}
+
+model ProjectPrize {
+  id          String   @id @default(cuid())
+  projectId   String
+  prizeTypeId String
+  createdAt   DateTime @default(now())
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  prizeType   PrizeType @relation(fields: [prizeTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, prizeTypeId])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  action      String
+  details     String?  // JSON string or plain text
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model SystemSettings {
+  id                       String   @id @default("global")
+  rewardUploadsRequired    Int      @default(1)
+  rewardDownloadsGranted   Int      @default(5)
+  updatedAt                DateTime @updatedAt
 }

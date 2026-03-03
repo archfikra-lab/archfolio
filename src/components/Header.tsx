@@ -58,7 +58,7 @@ export default function Header() {
             </div>
 
             {/* Main Header */}
-            <header className="sticky top-0 z-50 tracing-paper backdrop-blur-md border-b border-[var(--ink-line)] px-6 lg:px-12 py-4 frayed-edge">
+            <header className="sticky top-0 z-50 tracing-paper backdrop-blur-md border-b border-[var(--ink-line)] px-6 lg:px-12 py-4 frayed-edge shadow-sm">
                 <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
                     {/* Left: Logo + Desktop Nav */}
                     <div className="flex items-center gap-10">
@@ -73,15 +73,26 @@ export default function Header() {
 
                         {/* Desktop Navigation */}
                         <nav className="hidden xl:flex items-center gap-8">
-                            {navLinks.slice(0, 4).map((link) => (
-                                <Link
-                                    key={link.href}
-                                    className="text-sm font-semibold text-[var(--deep-teal)]/80 hover:text-[var(--mustard-gold)] transition-colors uppercase tracking-wider border-b border-transparent hover:border-[var(--mustard-gold)] pb-1"
-                                    href={link.href}
-                                >
-                                    {isArabic ? link.arabic : link.label}
-                                </Link>
-                            ))}
+                            {navLinks.map((link) => {
+                                // For the "Help" button, hide the text if we are on the homepage
+                                const isHomePage = pathname === '/en' || pathname === '/ar' || pathname === '/en/' || pathname === '/ar/';
+                                const isHelpLink = link.icon === 'help_outline';
+                                const hideText = isHomePage && isHelpLink;
+
+                                return (
+                                    <Link
+                                        key={link.href}
+                                        className={`text-sm font-semibold text-[var(--deep-teal)]/80 hover:text-[var(--mustard-gold)] transition-colors tracking-wider border-b border-transparent hover:border-[var(--mustard-gold)] pb-1 flex items-center gap-1 ${hideText ? '' : 'uppercase'}`}
+                                        href={link.href}
+                                    >
+                                        {hideText ? (
+                                            <span className="material-symbols-outlined text-[var(--deep-teal)] group-hover:text-[var(--mustard-gold)] text-xl transition-colors">{link.icon}</span>
+                                        ) : (
+                                            isArabic ? link.arabic : link.label
+                                        )}
+                                    </Link>
+                                );
+                            })}
                         </nav>
                     </div>
 
@@ -92,7 +103,7 @@ export default function Header() {
                         <LanguageSwitcher />
 
                         {/* Search */}
-                        <div className="hidden lg:flex items-center border border-[var(--ink-line)] px-4 py-1.5 tracing-paper rounded-sm">
+                        <div className="hidden lg:flex items-center border border-[var(--ink-line)] px-4 py-1.5 tracing-paper rounded-sm hand-drawn-card">
                             <span className="material-symbols-outlined text-[var(--paper-plane-grey)] text-xl">search</span>
                             <input
                                 className="bg-transparent border-none focus:ring-0 text-sm w-40 placeholder:text-[var(--paper-plane-grey)] text-[var(--deep-teal)] focus:outline-none"
@@ -107,7 +118,7 @@ export default function Header() {
                         {/* Submit CTA */}
                         <Link
                             href={`/${locale}/author`}
-                            className="hidden md:flex bg-[var(--mustard-gold)] text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[var(--deep-teal)] transition-all items-center gap-2"
+                            className="hidden md:flex chalk-btn border-[var(--mustard-gold)] text-[var(--mustard-gold)] px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[var(--mustard-gold)]/10 transition-all items-center gap-2"
                         >
                             <span className="material-symbols-outlined text-sm">edit_square</span>
                             {isArabic ? 'إرسال مسودة' : 'Submit Draft'}
@@ -138,7 +149,7 @@ export default function Header() {
                     <div className="xl:hidden mt-4 border-t border-[var(--ink-line)] pt-6 pb-4 animate-[fadeInUp_0.3s_ease]">
                         <div className="max-w-screen-2xl mx-auto">
                             {/* Mobile Search */}
-                            <div className="lg:hidden flex items-center border border-[var(--ink-line)] px-4 py-2 mb-6 tracing-paper">
+                            <div className="lg:hidden flex items-center border border-[var(--ink-line)] px-4 py-2 mb-6 tracing-paper hand-drawn-card">
                                 <span className="material-symbols-outlined text-[var(--paper-plane-grey)] text-xl">search</span>
                                 <input
                                     className="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-[var(--paper-plane-grey)] text-[var(--deep-teal)] focus:outline-none"
@@ -190,7 +201,7 @@ export default function Header() {
                                 <Link
                                     href={`/${locale}/author`}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="flex-1 bg-[var(--mustard-gold)] text-white px-6 py-3 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2"
+                                    className="flex-1 chalk-btn border-[var(--mustard-gold)] text-[var(--mustard-gold)] px-6 py-3 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2 hover:bg-[var(--mustard-gold)]/10"
                                 >
                                     <span className="material-symbols-outlined text-sm">edit_square</span>
                                     {isArabic ? 'إرسال مسودة' : 'Submit Draft'}
@@ -198,7 +209,7 @@ export default function Header() {
                                 <Link
                                     href={`/${locale}/login`}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="flex-1 border-2 border-[var(--deep-teal)] text-[var(--deep-teal)] px-6 py-3 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2"
+                                    className="flex-1 chalk-btn border-[var(--deep-teal)] text-[var(--deep-teal)] px-6 py-3 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2 hover:bg-[var(--deep-teal)]/10"
                                 >
                                     <span className="material-symbols-outlined text-sm">person</span>
                                     {isArabic ? 'تسجيل الدخول' : 'Sign In'}

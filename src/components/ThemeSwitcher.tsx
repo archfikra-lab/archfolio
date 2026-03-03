@@ -29,7 +29,7 @@ export default function ThemeSwitcher() {
 
     if (!mounted) {
         return (
-            <div className="flex items-center border border-[var(--light-ink-line)] bg-[var(--platinum-sheen)] rounded-full p-1 opacity-50">
+            <div className="flex items-center chalk-border bg-[var(--card-bg)] p-1 opacity-50 hand-drawn-card">
                 <button className="p-1.5 flex items-center justify-center text-[var(--paper-plane-grey)]" title="Light Theme">
                     <span className="material-symbols-outlined text-lg">light_mode</span>
                 </button>
@@ -39,41 +39,45 @@ export default function ThemeSwitcher() {
                 <button className="p-1.5 flex items-center justify-center text-[var(--paper-plane-grey)]" title="Blueprint Theme">
                     <TSquareTriangleIcon />
                 </button>
+                <button className="p-1.5 flex items-center justify-center text-[var(--paper-plane-grey)]" title="Green Theme">
+                    <span className="material-symbols-outlined text-lg">eco</span>
+                </button>
             </div>
         );
     }
 
+    const activeClass = 'bg-[var(--mustard-gold)] text-[var(--midnight-charcoal)] shadow-sm chalk-border';
+    const inactiveClass = 'text-[var(--paper-plane-grey)] hover:text-[var(--mustard-gold)]';
+
     return (
-        <div className="flex items-center border border-[var(--light-ink-line)] tracing-paper rounded-full p-1 transition-colors">
+        <div className="flex items-center chalk-border tracing-paper p-1 transition-colors hand-drawn-card">
             <button
                 onClick={() => setTheme('light')}
-                className={`p-1.5 flex items-center justify-center rounded-full transition-all ${theme === 'light'
-                    ? 'bg-[var(--mustard-gold)] text-[var(--midnight-charcoal)] shadow-sm'
-                    : 'text-[var(--paper-plane-grey)] hover:text-[var(--mustard-gold)]'
-                    }`}
+                className={`p-1.5 flex items-center justify-center transition-all hover-lift ${theme === 'light' ? activeClass : inactiveClass}`}
                 title="Light Theme"
             >
                 <span className="material-symbols-outlined text-lg">light_mode</span>
             </button>
             <button
                 onClick={() => setTheme('dark')}
-                className={`p-1.5 flex items-center justify-center rounded-full transition-all ${theme === 'dark'
-                    ? 'bg-[var(--mustard-gold)] text-[var(--midnight-charcoal)] shadow-sm'
-                    : 'text-[var(--paper-plane-grey)] hover:text-[var(--mustard-gold)]'
-                    }`}
+                className={`p-1.5 flex items-center justify-center transition-all hover-lift ${theme === 'dark' ? activeClass : inactiveClass}`}
                 title="Dark Theme"
             >
                 <span className="material-symbols-outlined text-lg">dark_mode</span>
             </button>
             <button
                 onClick={() => setTheme('blueprint')}
-                className={`p-1.5 flex items-center justify-center rounded-full transition-all ${theme === 'blueprint'
-                    ? 'bg-[var(--mustard-gold)] text-[var(--midnight-charcoal)] shadow-sm'
-                    : 'text-[var(--paper-plane-grey)] hover:text-[var(--mustard-gold)]'
-                    }`}
+                className={`p-1.5 flex items-center justify-center transition-all hover-lift ${theme === 'blueprint' ? activeClass : inactiveClass}`}
                 title="Blueprint Theme"
             >
                 <TSquareTriangleIcon />
+            </button>
+            <button
+                onClick={() => setTheme('green')}
+                className={`p-1.5 flex items-center justify-center transition-all hover-lift ${theme === 'green' ? 'bg-[#21c488] text-white shadow-sm chalk-border' : inactiveClass}`}
+                title="Green Theme"
+            >
+                <span className="material-symbols-outlined text-lg">eco</span>
             </button>
         </div>
     );
